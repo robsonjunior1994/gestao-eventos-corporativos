@@ -23,6 +23,17 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Evento>> GetAllWithAggregatesAsync()
+        {
+            return await _context.Eventos
+                .Include(e => e.TipoEvento)
+                .Include(e => e.Participantes).ThenInclude(pe => pe.Participante)
+                .Include(e => e.Fornecedores).ThenInclude(ef => ef.Fornecedor)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+
         public async Task<Evento> GetByIdAsync(int id)
         {
             return await _context.Eventos

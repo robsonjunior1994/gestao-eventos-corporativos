@@ -42,11 +42,22 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 DataFim = e.DataFim,
                 Local = e.Local,
                 Endereco = e.Endereco,
+                Observacoes = e.Observacoes,
                 LotacaoMaxima = e.LotacaoMaxima,
                 OrcamentoMaximo = e.OrcamentoMaximo,
                 ValorTotalFornecedores = e.ValorTotalFornecedores,
                 SaldoOrcamento = e.SaldoOrcamento,
-                TipoEventoDescricao = e.TipoEvento?.Descricao
+                TipoEventoDescricao = e.TipoEvento?.Descricao,
+
+                Participantes = e.Participantes?
+                    .Where(pe => pe.Participante != null)
+                    .Select(pe => pe.Participante!.NomeCompleto + ", CPF:" + pe.Participante!.CPF)
+                    .ToList() ?? new List<string>(),
+
+                Fornecedores = e.Fornecedores?
+                    .Where(ef => ef.Fornecedor != null)
+                    .Select(ef => ef.Fornecedor!.NomeServico + ", CNPJ:" + ef.Fornecedor!.CNPJ)
+                    .ToList() ?? new List<string>()
             });
 
             response.Success("Events retrieved successfully.",
@@ -54,6 +65,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
 
             return Ok(response);
         }
+
 
         // GET: api/eventos/5
         [HttpGet("{id}")]
@@ -87,12 +99,12 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
 
                 Participantes = result.Data.Participantes?
                     .Where(pe => pe.Participante != null)
-                    .Select(pe => pe.Participante!.NomeCompleto+" CPF:" + pe.Participante!.CPF)
+                    .Select(pe => pe.Participante!.NomeCompleto + ", CPF:" + pe.Participante!.CPF)
                     .ToList() ?? new List<string>(),
 
                 Fornecedores = result.Data.Fornecedores?
                     .Where(ef => ef.Fornecedor != null)
-                    .Select(ef => ef.Fornecedor!.NomeServico) // ou NomeFantasia se for seu campo
+                    .Select(ef => ef.Fornecedor!.NomeServico + ", CNPJ:" + ef.Fornecedor!.CNPJ) // ou NomeFantasia se for seu campo
                     .ToList() ?? new List<string>()
             };
 

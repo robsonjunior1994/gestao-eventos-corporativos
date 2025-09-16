@@ -81,17 +81,14 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
         {
             try
             {
-                var eventos = await _eventoRepository.GetAllAsync();
-
+                var eventos = await _eventoRepository.GetAllWithAggregatesAsync();
                 return Result<IEnumerable<Evento>>.Success(eventos);
             }
             catch (Exception)
             {
-                // logar erro aqui (ex: Serilog, Console, etc.)
-                return Result<IEnumerable<Evento>>.Failure("Ocorreu um erro ao buscar os eventos.", ErrorCode.DATABASE_ERROR);
+                return Result<IEnumerable<Evento>>.Failure("Erro ao buscar eventos.", ErrorCode.DATABASE_ERROR);
             }
         }
-
 
         public async Task<Result<Evento>> GetByIdAsync(int id)
         {
