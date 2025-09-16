@@ -1,7 +1,5 @@
 ﻿using GestaoEventosCorporativos.Api._02_Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 
 namespace GestaoEventosCorporativos.Api._03_Infrastructure.Context
 {

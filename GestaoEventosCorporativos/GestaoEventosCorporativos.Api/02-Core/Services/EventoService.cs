@@ -1,10 +1,8 @@
-﻿using GestaoEventosCorporativos.Api._01_Presentation.DTOs.Requests;
-using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
+﻿using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
 using GestaoEventosCorporativos.Api._02_Core.Entities;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Services;
 using GestaoEventosCorporativos.Api._02_Core.Shared;
-using GestaoEventosCorporativos.Api._03_Infrastructure.Repositories;
 
 namespace GestaoEventosCorporativos.Api._02_Core.Services
 {

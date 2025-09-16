@@ -3,8 +3,6 @@ using GestaoEventosCorporativos.Api._01_Presentation.DTOs.Responses;
 using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
 using GestaoEventosCorporativos.Api._02_Core.Entities;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Services;
-using GestaoEventosCorporativos.Api._02_Core.Shared;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers

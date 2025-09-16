@@ -2,7 +2,6 @@
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
 using GestaoEventosCorporativos.Api._03_Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
 {
