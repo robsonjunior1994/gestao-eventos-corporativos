@@ -19,13 +19,13 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             _eventoService = eventoService;
         }
 
-        // GET: api/eventos
+        // GET: api/eventos?pageNumber=1&pageSize=10
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = new ResponseDTO();
 
-            Result<IEnumerable<Evento>> result = await _eventoService.GetAllAsync();
+            var result = await _eventoService.GetAllAsync(pageNumber, pageSize);
 
             if (!result.IsSuccess)
             {
@@ -34,7 +34,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 return StatusCode(statusCode, response);
             }
 
-            var eventosResponse = result.Data.Select(e => new EventoResponse
+            var eventosResponse = result.Data.Items.Select(e => new EventoResponse
             {
                 Id = e.Id,
                 Nome = e.Nome,
@@ -60,8 +60,16 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                     .ToList() ?? new List<string>()
             });
 
+            var pagedResponse = new PagedResult<EventoResponse>
+            {
+                Items = eventosResponse,
+                TotalCount = result.Data.TotalCount,
+                PageNumber = result.Data.PageNumber,
+                PageSize = result.Data.PageSize
+            };
+
             response.Success("Events retrieved successfully.",
-                StatusCodes.Status200OK.ToString(), eventosResponse);
+                StatusCodes.Status200OK.ToString(), pagedResponse);
 
             return Ok(response);
         }

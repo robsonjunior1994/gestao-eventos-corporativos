@@ -4,7 +4,7 @@ namespace GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories
 {
     public interface IParticipanteRepository
     {
-        Task<IEnumerable<Participante>> GetAllAsync();
+        Task<(IEnumerable<Participante> Participantes, int TotalCount)> GetAllAsync(int pageNumber, int pageSize);
         Task<Participante> GetByIdAsync(int id);
         Task<Participante> GetByCpfAsync(string cpf);
         Task<Participante> GetByCpfWithEventosAsync(string cpf);

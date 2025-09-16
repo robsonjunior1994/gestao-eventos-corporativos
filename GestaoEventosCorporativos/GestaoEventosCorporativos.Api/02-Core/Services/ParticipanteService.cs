@@ -1,4 +1,5 @@
-﻿using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
+﻿using GestaoEventosCorporativos.Api._01_Presentation.DTOs.Responses;
+using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
 using GestaoEventosCorporativos.Api._02_Core.Entities;
 using GestaoEventosCorporativos.Api._02_Core.Enums;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
@@ -60,18 +61,28 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             }
         }
 
-        public async Task<Result<IEnumerable<Participante>>> GetAllAsync()
+        public async Task<Result<PagedResult<Participante>>> GetAllAsync(int pageNumber, int pageSize)
         {
             try
             {
-                var participantes = await _participanteRepository.GetAllAsync();
-                return Result<IEnumerable<Participante>>.Success(participantes);
+                var (participantes, totalCount) = await _participanteRepository.GetAllAsync(pageNumber, pageSize);
+
+                var pagedResult = new PagedResult<Participante>
+                {
+                    Items = participantes,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                return Result<PagedResult<Participante>>.Success(pagedResult);
             }
             catch (Exception)
             {
-                return Result<IEnumerable<Participante>>.Failure("Erro ao buscar participantes.", ErrorCode.DATABASE_ERROR);
+                return Result<PagedResult<Participante>>.Failure("Erro ao buscar participantes.", ErrorCode.DATABASE_ERROR);
             }
         }
+
 
         public async Task<Result<Participante>> GetByIdAsync(int id)
         {

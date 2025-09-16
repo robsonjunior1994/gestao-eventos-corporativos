@@ -61,11 +61,12 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return StatusCode(StatusCodes.Status201Created, response);
         }
 
+        // GET: api/participantes?pageNumber=1&pageSize=10
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = new ResponseDTO();
-            var result = await _participanteService.GetAllAsync();
+            var result = await _participanteService.GetAllAsync(pageNumber, pageSize);
 
             if (!result.IsSuccess)
             {
@@ -74,7 +75,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 return StatusCode(statusCode, response);
             }
 
-            var participantes = result.Data.Select(p => new ParticipanteResponse
+            var participantesResponse = result.Data.Items.Select(p => new ParticipanteResponse
             {
                 Id = p.Id,
                 NomeCompleto = p.NomeCompleto,
@@ -83,8 +84,16 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 Tipo = p.Tipo.ToString()
             });
 
+            var pagedResponse = new PagedResult<ParticipanteResponse>
+            {
+                Items = participantesResponse,
+                TotalCount = result.Data.TotalCount,
+                PageNumber = result.Data.PageNumber,
+                PageSize = result.Data.PageSize
+            };
+
             response.Success("Participantes recuperados com sucesso.",
-                StatusCodes.Status200OK.ToString(), participantes);
+                StatusCodes.Status200OK.ToString(), pagedResponse);
 
             return Ok(response);
         }

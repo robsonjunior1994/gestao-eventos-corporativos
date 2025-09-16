@@ -14,12 +14,21 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Participante>> GetAllAsync()
+        public async Task<(IEnumerable<Participante> Participantes, int TotalCount)> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Participantes
-                .AsNoTracking()
+            var query = _context.Participantes.AsNoTracking();
+
+            int totalCount = await query.CountAsync();
+
+            var participantes = await query
+                .OrderBy(p => p.NomeCompleto) // ordena por nome
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return (participantes, totalCount);
         }
+
 
         public async Task<Participante> GetByIdAsync(int id)
         {

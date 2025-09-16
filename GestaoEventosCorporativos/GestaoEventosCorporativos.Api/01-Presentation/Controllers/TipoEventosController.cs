@@ -18,11 +18,12 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             _tipoEventoService = tipoEventoService;
         }
 
+        // GET: api/tipoeventos?pageNumber=1&pageSize=10
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = new ResponseDTO();
-            var result = await _tipoEventoService.GetAllAsync();
+            var result = await _tipoEventoService.GetAllAsync(pageNumber, pageSize);
 
             if (!result.IsSuccess)
             {
@@ -31,17 +32,26 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 return StatusCode(statusCode, response);
             }
 
-            var tipos = result.Data.Select(t => new TipoEventoResponse
+            var tiposResponse = result.Data.Items.Select(t => new TipoEventoResponse
             {
                 Id = t.Id,
                 Descricao = t.Descricao
             });
 
+            var pagedResponse = new PagedResult<TipoEventoResponse>
+            {
+                Items = tiposResponse,
+                TotalCount = result.Data.TotalCount,
+                PageNumber = result.Data.PageNumber,
+                PageSize = result.Data.PageSize
+            };
+
             response.Success("Tipos de evento recuperados com sucesso.",
-                StatusCodes.Status200OK.ToString(), tipos);
+                StatusCodes.Status200OK.ToString(), pagedResponse);
 
             return Ok(response);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)

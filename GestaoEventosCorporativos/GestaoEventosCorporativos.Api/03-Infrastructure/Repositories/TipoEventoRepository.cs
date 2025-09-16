@@ -26,12 +26,21 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<TipoEvento>> GetAllAsync()
+        public async Task<(IEnumerable<TipoEvento> Tipos, int TotalCount)> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.TiposEventos
-                .AsNoTracking()
+            var query = _context.TiposEventos.AsNoTracking();
+
+            int totalCount = await query.CountAsync();
+
+            var tipos = await query
+                .OrderBy(t => t.Descricao)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return (tipos, totalCount);
         }
+
 
         public async Task<TipoEvento> GetByIdAsync(int id)
         {

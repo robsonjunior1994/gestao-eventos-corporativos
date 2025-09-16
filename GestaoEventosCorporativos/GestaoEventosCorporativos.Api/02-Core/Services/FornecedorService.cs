@@ -1,4 +1,5 @@
-﻿using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
+﻿using GestaoEventosCorporativos.Api._01_Presentation.DTOs.Responses;
+using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
 using GestaoEventosCorporativos.Api._02_Core.Entities;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Services;
@@ -58,18 +59,28 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             }
         }
 
-        public async Task<Result<IEnumerable<Fornecedor>>> GetAllAsync()
+        public async Task<Result<PagedResult<Fornecedor>>> GetAllAsync(int pageNumber, int pageSize)
         {
             try
             {
-                var fornecedores = await _fornecedorRepository.GetAllAsync();
-                return Result<IEnumerable<Fornecedor>>.Success(fornecedores);
+                var (fornecedores, totalCount) = await _fornecedorRepository.GetAllAsync(pageNumber, pageSize);
+
+                var pagedResult = new PagedResult<Fornecedor>
+                {
+                    Items = fornecedores,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                return Result<PagedResult<Fornecedor>>.Success(pagedResult);
             }
             catch (Exception)
             {
-                return Result<IEnumerable<Fornecedor>>.Failure("Erro ao buscar fornecedores.", ErrorCode.DATABASE_ERROR);
+                return Result<PagedResult<Fornecedor>>.Failure("Erro ao buscar fornecedores.", ErrorCode.DATABASE_ERROR);
             }
         }
+
 
         public async Task<Result<Fornecedor>> GetByIdAsync(int id)
         {

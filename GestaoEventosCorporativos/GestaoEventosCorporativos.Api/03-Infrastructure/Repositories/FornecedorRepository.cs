@@ -14,12 +14,20 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Fornecedor>> GetAllAsync()
+        public async Task<(IEnumerable<Fornecedor> Fornecedores, int TotalCount)> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Fornecedores
-                .AsNoTracking()
+            var query = _context.Fornecedores.AsNoTracking();
+
+            int totalCount = await query.CountAsync();
+
+            var fornecedores = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return (fornecedores, totalCount);
         }
+
 
         public async Task<Fornecedor> GetByIdAsync(int id)
         {

@@ -22,15 +22,23 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Evento>> GetAllWithAggregatesAsync()
+        public async Task<(IEnumerable<Evento> Eventos, int TotalCount)> GetAllWithAggregatesAsync(int pageNumber, int pageSize)
         {
-            return await _context.Eventos
+            var query = _context.Eventos
                 .Include(e => e.TipoEvento)
                 .Include(e => e.Participantes).ThenInclude(pe => pe.Participante)
                 .Include(e => e.Fornecedores).ThenInclude(ef => ef.Fornecedor)
-                .ToListAsync();
-        }
+                .AsQueryable();
 
+            int totalCount = await query.CountAsync();
+
+            var eventos = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (eventos, totalCount);
+        }
 
         public async Task<Evento> GetByIdAsync(int id)
         {

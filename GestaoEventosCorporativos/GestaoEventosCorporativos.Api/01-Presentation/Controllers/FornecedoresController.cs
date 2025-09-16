@@ -18,12 +18,12 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             _fornecedorService = fornecedorService;
         }
 
-        // GET: api/fornecedores
+        // GET: api/fornecedores?pageNumber=1&pageSize=10
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = new ResponseDTO();
-            var result = await _fornecedorService.GetAllAsync();
+            var result = await _fornecedorService.GetAllAsync(pageNumber, pageSize);
 
             if (!result.IsSuccess)
             {
@@ -32,7 +32,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 return StatusCode(statusCode, response);
             }
 
-            var list = result.Data.Select(f => new FornecedorResponse
+            var fornecedoresResponse = result.Data.Items.Select(f => new FornecedorResponse
             {
                 Id = f.Id,
                 NomeServico = f.NomeServico,
@@ -40,11 +40,20 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 ValorBase = f.ValorBase
             });
 
+            var pagedResponse = new PagedResult<FornecedorResponse>
+            {
+                Items = fornecedoresResponse,
+                TotalCount = result.Data.TotalCount,
+                PageNumber = result.Data.PageNumber,
+                PageSize = result.Data.PageSize
+            };
+
             response.Success("Fornecedores recuperados com sucesso.",
-                StatusCodes.Status200OK.ToString(), list);
+                StatusCodes.Status200OK.ToString(), pagedResponse);
 
             return Ok(response);
         }
+
 
         // GET: api/fornecedores/5
         [HttpGet("{id}")]

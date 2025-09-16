@@ -1,4 +1,5 @@
-﻿using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
+﻿using GestaoEventosCorporativos.Api._01_Presentation.DTOs.Responses;
+using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
 using GestaoEventosCorporativos.Api._02_Core.Entities;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Services;
@@ -54,18 +55,28 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             }
         }
 
-        public async Task<Result<IEnumerable<TipoEvento>>> GetAllAsync()
+        public async Task<Result<PagedResult<TipoEvento>>> GetAllAsync(int pageNumber, int pageSize)
         {
             try
             {
-                var tipos = await _tipoEventoRepository.GetAllAsync();
-                return Result<IEnumerable<TipoEvento>>.Success(tipos);
+                var (tipos, totalCount) = await _tipoEventoRepository.GetAllAsync(pageNumber, pageSize);
+
+                var pagedResult = new PagedResult<TipoEvento>
+                {
+                    Items = tipos,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                return Result<PagedResult<TipoEvento>>.Success(pagedResult);
             }
             catch (Exception)
             {
-                return Result<IEnumerable<TipoEvento>>.Failure("Erro ao buscar tipos de evento.", ErrorCode.DATABASE_ERROR);
+                return Result<PagedResult<TipoEvento>>.Failure("Erro ao buscar tipos de evento.", ErrorCode.DATABASE_ERROR);
             }
         }
+
 
         public async Task<Result<TipoEvento>> GetByIdAsync(int id)
         {
