@@ -126,8 +126,23 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 return StatusCode(statusCode, response);
             }
 
-            response.Success("Event created successfully.",
-                StatusCodes.Status201Created.ToString(), result.Data);
+            response.Success("Evento criado com sucesso.",
+                StatusCodes.Status201Created.ToString(),
+                new EventoResponse
+                {
+                    Id = result.Data.Id,
+                    Nome = result.Data.Nome,
+                    DataInicio = result.Data.DataInicio,
+                    DataFim = result.Data.DataFim,
+                    Local = result.Data.Local,
+                    Endereco = result.Data.Endereco,
+                    Observacoes = result.Data.Observacoes,
+                    LotacaoMaxima = result.Data.LotacaoMaxima,
+                    OrcamentoMaximo = result.Data.OrcamentoMaximo,
+                    ValorTotalFornecedores = result.Data.ValorTotalFornecedores,
+                    SaldoOrcamento = result.Data.SaldoOrcamento,
+                    TipoEventoDescricao = result.Data.TipoEvento?.Descricao
+                });
 
             return StatusCode(StatusCodes.Status201Created, response);
         }
@@ -169,8 +184,23 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 return StatusCode(statusCode, response);
             }
 
-            response.Success("Event updated successfully.",
-                StatusCodes.Status200OK.ToString(), updateResult.Data);
+            response.Success("Evento atualizado com sucesso.",
+                StatusCodes.Status201Created.ToString(),
+                new EventoResponse
+                {
+                    Id = result.Data.Id,
+                    Nome = result.Data.Nome,
+                    DataInicio = result.Data.DataInicio,
+                    DataFim = result.Data.DataFim,
+                    Local = result.Data.Local,
+                    Endereco = result.Data.Endereco,
+                    Observacoes = result.Data.Observacoes,
+                    LotacaoMaxima = result.Data.LotacaoMaxima,
+                    OrcamentoMaximo = result.Data.OrcamentoMaximo,
+                    ValorTotalFornecedores = result.Data.ValorTotalFornecedores,
+                    SaldoOrcamento = result.Data.SaldoOrcamento,
+                    TipoEventoDescricao = result.Data.TipoEvento?.Descricao
+                });
 
             return Ok(response);
         }

@@ -3,16 +3,19 @@ using GestaoEventosCorporativos.Api._02_Core.Entities;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Services;
 using GestaoEventosCorporativos.Api._02_Core.Shared;
+using GestaoEventosCorporativos.Api._03_Infrastructure.Repositories;
 
 namespace GestaoEventosCorporativos.Api._02_Core.Services
 {
     public class EventoService : IEventoService
     {
         private readonly IEventoRepository _eventoRepository;
+        private readonly ITipoEventoRepository _tipoEventoRepository;
 
-        public EventoService(IEventoRepository eventoRepository)
+        public EventoService(IEventoRepository eventoRepository, ITipoEventoRepository tipoEventoRepository)
         {
             _eventoRepository = eventoRepository;
+            _tipoEventoRepository = tipoEventoRepository;
         }
         public async Task<Result<Evento>> AddAsync(Evento evento)
         {
@@ -30,6 +33,11 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
                 if (evento.OrcamentoMaximo < EventoRegras.ORCAMENTO_MINIMO)
                     return Result<Evento>.Failure("O orçamento deve ser maior que zero.", ErrorCode.VALIDATION_ERROR);
 
+                // Regra de negócio 4: TipoEvento precisa existir
+                var tipoEvento = await _tipoEventoRepository.GetByIdAsync(evento.TipoEventoId);
+                if (tipoEvento == null)
+                    return Result<Evento>.Failure("O tipo de evento informado não existe.", ErrorCode.NOT_FOUND);
+
                 // Persistência
                 await _eventoRepository.AddAsync(evento);
 
@@ -37,10 +45,11 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             }
             catch (Exception)
             {
-                // logar erro aqui (ex: Serilog, Console, etc.) se der tempo
+                // logar erro aqui (ex: Serilog, Console, etc.)
                 return Result<Evento>.Failure("Ocorreu um erro ao criar o evento.", ErrorCode.DATABASE_ERROR);
             }
         }
+
 
         public async Task<Result<bool>> DeleteAsync(int id)
         {
@@ -112,6 +121,11 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
                 // Regra de negócio 3: Orçamento > 0
                 if (evento.OrcamentoMaximo < EventoRegras.ORCAMENTO_MINIMO)
                     return Result<Evento>.Failure("O orçamento deve ser maior que zero.", ErrorCode.VALIDATION_ERROR);
+
+                // Regra de negócio 4: TipoEvento precisa existir
+                var tipoEvento = await _tipoEventoRepository.GetByIdAsync(evento.TipoEventoId);
+                if (tipoEvento == null)
+                    return Result<Evento>.Failure("O tipo de evento informado não existe.", ErrorCode.NOT_FOUND);
 
                 // Persistência
                 await _eventoRepository.UpdateAsync(evento);

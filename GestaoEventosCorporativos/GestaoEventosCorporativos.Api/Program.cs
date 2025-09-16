@@ -21,11 +21,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IEventoRepository, EventoRepository>();
 builder.Services.AddScoped<IParticipanteRepository, ParticipanteRepository>();
 builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+builder.Services.AddScoped<ITipoEventoRepository, TipoEventoRepository>();
 
 // 3. Serviços
 builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<IParticipanteService, ParticipanteService>();
 builder.Services.AddScoped<IFornecedorService, FornecedorService>();
+builder.Services.AddScoped<ITipoEventoService, TipoEventoService>();
 
 var app = builder.Build();
 

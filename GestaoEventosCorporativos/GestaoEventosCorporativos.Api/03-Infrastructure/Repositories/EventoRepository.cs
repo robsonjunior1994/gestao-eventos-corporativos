@@ -19,6 +19,7 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
         {
             return await _context.Eventos
                 .Include(e => e.TipoEvento)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
