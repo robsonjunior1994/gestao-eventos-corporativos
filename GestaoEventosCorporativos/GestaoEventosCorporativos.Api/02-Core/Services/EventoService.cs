@@ -13,13 +13,16 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
         private readonly IEventoRepository _eventoRepository;
         private readonly ITipoEventoRepository _tipoEventoRepository;
         private readonly IParticipanteRepository _participanteRepository;
+        private readonly IFornecedorRepository _fornecedorRepository;
         public EventoService(IEventoRepository eventoRepository, 
             ITipoEventoRepository tipoEventoRepository,
-            IParticipanteRepository participanteRepository)
+            IParticipanteRepository participanteRepository,
+            IFornecedorRepository fornecedorRepository)
         {
             _eventoRepository = eventoRepository;
             _tipoEventoRepository = tipoEventoRepository;
             _participanteRepository = participanteRepository;
+            _fornecedorRepository = fornecedorRepository;
         }
         public async Task<Result<Evento>> AddAsync(Evento evento)
         {
@@ -191,6 +194,48 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             catch (Exception)
             {
                 return Result<Participante>.Failure("Erro ao adicionar participante ao evento.", ErrorCode.DATABASE_ERROR);
+            }
+        }
+
+        public async Task<Result<Fornecedor>> AddFornecedorByCnpjAsync(int eventoId, string cnpj)
+        {
+            try
+            {
+                var evento = await _eventoRepository.GetByIdWithAggregatesAsync(eventoId);
+                if (evento == null)
+                    return Result<Fornecedor>.Failure("Evento não encontrado.", ErrorCode.NOT_FOUND);
+
+                if (string.IsNullOrWhiteSpace(cnpj))
+                    return Result<Fornecedor>.Failure("O CNPJ é obrigatório.", ErrorCode.VALIDATION_ERROR);
+
+                var fornecedor = await _fornecedorRepository.GetByCnpjAsync(cnpj);
+                if (fornecedor == null)
+                    return Result<Fornecedor>.Failure("Fornecedor não encontrado.", ErrorCode.NOT_FOUND);
+
+                if (evento.Fornecedores.Any(f => f.FornecedorId == fornecedor.Id))
+                    return Result<Fornecedor>.Failure("Fornecedor já está vinculado a este evento.", ErrorCode.RESOURCE_ALREADY_EXISTS);
+
+                // Orçamento do evento
+                if (fornecedor.ValorBase > evento.SaldoOrcamento)
+                    return Result<Fornecedor>.Failure("O valor base do fornecedor excede o saldo do orçamento do evento.", ErrorCode.VALIDATION_ERROR);
+
+                var eventoFornecedor = new EventoFornecedor
+                {
+                    EventoId = evento.Id,
+                    FornecedorId = fornecedor.Id,
+                    ValorContratado = fornecedor.ValorBase,
+                    Fornecedor = fornecedor
+                };
+
+                evento.Fornecedores.Add(eventoFornecedor);
+
+                await _eventoRepository.UpdateAsync(evento);
+
+                return Result<Fornecedor>.Success(fornecedor);
+            }
+            catch (Exception)
+            {
+                return Result<Fornecedor>.Failure("Erro ao adicionar fornecedor ao evento.", ErrorCode.DATABASE_ERROR);
             }
         }
     }

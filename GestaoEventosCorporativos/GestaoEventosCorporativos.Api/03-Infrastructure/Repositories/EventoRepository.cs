@@ -38,7 +38,6 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
                     .ThenInclude(pe => pe.Participante)
                 .Include(e => e.Fornecedores)
                     .ThenInclude(ef => ef.Fornecedor)
-                .AsNoTracking() 
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 

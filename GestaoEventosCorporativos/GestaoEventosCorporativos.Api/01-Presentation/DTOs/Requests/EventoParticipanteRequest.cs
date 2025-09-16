@@ -2,7 +2,7 @@
 
 namespace GestaoEventosCorporativos.Api._01_Presentation.DTOs.Requests
 {
-    public class ParticipanteEventoRequest
+    public class EventoParticipanteRequest
     {
 
         [Required(ErrorMessage = "O CPF é obrigatório.")]

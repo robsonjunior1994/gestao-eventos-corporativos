@@ -238,7 +238,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
         }
 
         [HttpPost("{eventoId}/participantes")]
-        public async Task<IActionResult> AddParticipante(int eventoId, [FromBody] ParticipanteEventoRequest participanteEventoRequest)
+        public async Task<IActionResult> AddParticipante(int eventoId, [FromBody] EventoParticipanteRequest participanteEventoRequest)
         {
             var response = new ResponseDTO();
 
@@ -270,5 +270,43 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
 
             return StatusCode(StatusCodes.Status201Created, response);
         }
+
+        [HttpPost("{eventoId}/fornecedores")]
+        public async Task<IActionResult> AddFornecedor(int eventoId, [FromBody] EventoFornecedorRequest request)
+        {
+            var response = new ResponseDTO();
+
+            if (!ModelState.IsValid)
+            {
+                response.Failure("Dados inválidos para fornecedor.",
+                    StatusCodes.Status400BadRequest.ToString(), ModelState);
+
+                return StatusCode(StatusCodes.Status400BadRequest, response);
+            }
+
+            var result = await _eventoService.AddFornecedorByCnpjAsync(eventoId, request.CNPJ);
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.Failure(result.ErrorMessage, statusCode.ToString(), request);
+                return StatusCode(statusCode, response);
+            }
+
+            // Retorna DTO enxuto para não causar ciclos na serialização
+            var fornecedorDto = new FornecedorResponse
+            {
+                Id = result.Data.Id,
+                NomeServico = result.Data.NomeServico,
+                CNPJ = result.Data.CNPJ,
+                ValorBase = result.Data.ValorBase
+            };
+
+            response.Success("Fornecedor adicionado ao evento com sucesso.",
+                StatusCodes.Status201Created.ToString(), fornecedorDto);
+
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+
     }
 }
