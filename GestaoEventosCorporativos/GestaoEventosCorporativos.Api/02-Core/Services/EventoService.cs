@@ -143,7 +143,7 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
         {
             try
             {
-                var evento = await _eventoRepository.GetByIdAsync(eventoId);
+                var evento = await _eventoRepository.GetByIdWithAggregatesAsync(eventoId);
                 if (evento == null)
                     return Result<Participante>.Failure("Evento não encontrado.", ErrorCode.NOT_FOUND);
 
