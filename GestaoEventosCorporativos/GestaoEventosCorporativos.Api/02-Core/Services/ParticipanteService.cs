@@ -1,6 +1,8 @@
-﻿namespace GestaoEventosCorporativos.Api._02_Core.Services
+﻿using GestaoEventosCorporativos.Api._02_Core.Interfaces.Services;
+
+namespace GestaoEventosCorporativos.Api._02_Core.Services
 {
-    public class ParticipanteService
+    public class ParticipanteService : IParticipanteService
     {
     }
 }

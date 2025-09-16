@@ -1,6 +1,8 @@
-﻿namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
+﻿using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
+
+namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
 {
-    public class ParticipanteRepository
+    public class ParticipanteRepository : IParticipanteRepository
     {
     }
 }

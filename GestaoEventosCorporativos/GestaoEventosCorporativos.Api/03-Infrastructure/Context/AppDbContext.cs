@@ -1,0 +1,31 @@
+﻿using GestaoEventosCorporativos.Api._02_Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Reflection.Emit;
+
+namespace GestaoEventosCorporativos.Api._03_Infrastructure.Context
+{
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options)
+        {
+        }
+
+        // DbSets
+        public DbSet<Evento> Eventos { get; set; }
+        public DbSet<TipoEvento> TiposEventos { get; set; }
+        public DbSet<Participante> Participantes { get; set; }
+        public DbSet<Fornecedor> Fornecedores { get; set; }
+        public DbSet<ParticipanteEvento> ParticipantesEventos { get; set; }
+        public DbSet<EventoFornecedor> EventosFornecedores { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Aplica todas as configurações que estão na pasta Configurations para evitar o acúmulo de código aqui
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+}

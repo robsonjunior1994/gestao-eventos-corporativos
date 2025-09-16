@@ -1,6 +1,9 @@
 ﻿namespace GestaoEventosCorporativos.Api._02_Core.Enums
 {
-    public class TipoParticipante
+    public enum TipoParticipante
     {
+        VIP,
+        Interno,
+        Externo
     }
 }

@@ -1,0 +1,199 @@
+﻿using GestaoEventosCorporativos.Api._01_Presentation.DTOs.Requests;
+using GestaoEventosCorporativos.Api._01_Presentation.DTOs.Responses;
+using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
+using GestaoEventosCorporativos.Api._02_Core.Entities;
+using GestaoEventosCorporativos.Api._02_Core.Interfaces.Services;
+using GestaoEventosCorporativos.Api._02_Core.Shared;
+using Microsoft.AspNetCore.Mvc;
+
+namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EventosController : ControllerBase
+    {
+        private readonly IEventoService _eventoService;
+
+        public EventosController(IEventoService eventoService)
+        {
+            _eventoService = eventoService;
+        }
+
+        // GET: api/eventos
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var response = new ResponseDTO();
+
+            Result<IEnumerable<Evento>> result = await _eventoService.GetAllAsync();
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.Failure(result.ErrorMessage, statusCode.ToString());
+                return StatusCode(statusCode, response);
+            }
+
+            var eventosResponse = result.Data.Select(e => new EventoResponse
+            {
+                Id = e.Id,
+                Nome = e.Nome,
+                DataInicio = e.DataInicio,
+                DataFim = e.DataFim,
+                Local = e.Local,
+                Endereco = e.Endereco,
+                LotacaoMaxima = e.LotacaoMaxima,
+                OrcamentoMaximo = e.OrcamentoMaximo,
+                ValorTotalFornecedores = e.ValorTotalFornecedores,
+                SaldoOrcamento = e.SaldoOrcamento,
+                TipoEventoDescricao = e.TipoEvento?.Descricao
+            });
+
+            response.Success("Events retrieved successfully.",
+                StatusCodes.Status200OK.ToString(), eventosResponse);
+
+            return Ok(response);
+        }
+
+        // GET: api/eventos/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var response = new ResponseDTO();
+
+            Result<Evento> result = await _eventoService.GetByIdAsync(id);
+
+            if (!result.IsSuccess || result.Data == null)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode ?? ErrorCode.NOT_FOUND);
+                response.Failure(result.ErrorMessage ?? "Event not found.", statusCode.ToString());
+                return StatusCode(statusCode, response);
+            }
+
+            var eventoResponse = new EventoResponse
+            {
+                Id = result.Data.Id,
+                Nome = result.Data.Nome,
+                DataInicio = result.Data.DataInicio,
+                DataFim = result.Data.DataFim,
+                Local = result.Data.Local,
+                Endereco = result.Data.Endereco,
+                LotacaoMaxima = result.Data.LotacaoMaxima,
+                OrcamentoMaximo = result.Data.OrcamentoMaximo,
+                ValorTotalFornecedores = result.Data.ValorTotalFornecedores,
+                SaldoOrcamento = result.Data.SaldoOrcamento,
+                TipoEventoDescricao = result.Data.TipoEvento?.Descricao
+            };
+
+            response.Success("Event retrieved successfully.",
+                StatusCodes.Status200OK.ToString(), eventoResponse);
+
+            return Ok(response);
+        }
+
+        // POST: api/eventos
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] EventoRequest request)
+        {
+            var response = new ResponseDTO();
+
+            if (!ModelState.IsValid)
+            {
+                response.Failure("Invalid event data.",
+                    StatusCodes.Status400BadRequest.ToString(), ModelState);
+
+                return StatusCode(StatusCodes.Status400BadRequest, response);
+            }
+
+            var evento = new Evento(
+                nome: request.Nome,
+                dataInicio: request.DataInicio,
+                dataFim: request.DataFim,
+                local: request.Local,
+                endereco: request.Endereco,
+                observacoes: request.Observacoes,
+                lotacaoMaxima: request.LotacaoMaxima,
+                orcamentoMaximo: request.OrcamentoMaximo,
+                tipoEventoId: request.TipoEventoId
+            );
+
+            Result<Evento> result = await _eventoService.AddAsync(evento);
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.Failure(result.ErrorMessage, statusCode.ToString(), request);
+                return StatusCode(statusCode, response);
+            }
+
+            response.Success("Event created successfully.",
+                StatusCodes.Status201Created.ToString(), result.Data);
+
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+
+        // PUT: api/eventos/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] EventoRequest request)
+        {
+            var response = new ResponseDTO();
+
+            Result<Evento> result = await _eventoService.GetByIdAsync(id);
+            if (!result.IsSuccess || result.Data == null)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode ?? ErrorCode.NOT_FOUND);
+
+                response.Failure(result.ErrorMessage ?? "Event not found.", statusCode.ToString());
+                return StatusCode(statusCode, response);
+            }
+
+            var evento = result.Data;
+            evento.Update(
+                nome: request.Nome,
+                dataInicio: request.DataInicio,
+                dataFim: request.DataFim,
+                local: request.Local,
+                endereco: request.Endereco,
+                observacoes: request.Observacoes,
+                lotacaoMaxima: request.LotacaoMaxima,
+                orcamentoMaximo: request.OrcamentoMaximo,
+                tipoEventoId: request.TipoEventoId
+            );
+
+            Result<Evento> updateResult = await _eventoService.UpdateAsync(evento);
+
+            if (!updateResult.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(updateResult.ErrorCode);
+                response.Failure(updateResult.ErrorMessage, statusCode.ToString(), request);
+                return StatusCode(statusCode, response);
+            }
+
+            response.Success("Event updated successfully.",
+                StatusCodes.Status200OK.ToString(), updateResult.Data);
+
+            return Ok(response);
+        }
+
+        // DELETE: api/eventos/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var response = new ResponseDTO();
+
+            Result<bool> result = await _eventoService.DeleteAsync(id);
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.Failure(result.ErrorMessage, statusCode.ToString());
+                return StatusCode(statusCode, response);
+            }
+
+            response.Success("Event deleted successfully.",
+                StatusCodes.Status200OK.ToString(), true);
+
+            return Ok(response);
+        }
+    }
+}
