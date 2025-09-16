@@ -1,8 +1,52 @@
-﻿using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
+﻿using GestaoEventosCorporativos.Api._02_Core.Entities;
+using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
+using GestaoEventosCorporativos.Api._03_Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
 {
     public class ParticipanteRepository : IParticipanteRepository
     {
+        private readonly AppDbContext _context;
+
+        public ParticipanteRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Participante>> GetAllAsync()
+        {
+            return await _context.Participantes.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<Participante?> GetByIdAsync(int id)
+        {
+            return await _context.Participantes.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<Participante?> GetByCpfAsync(string cpf)
+        {
+            return await _context.Participantes.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.CPF == cpf);
+        }
+
+        public async Task AddAsync(Participante participante)
+        {
+            await _context.Participantes.AddAsync(participante);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Participante participante)
+        {
+            _context.Participantes.Update(participante);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Participante participante)
+        {
+            _context.Participantes.Remove(participante);
+            await _context.SaveChangesAsync();
+        }
     }
 }
