@@ -27,9 +27,12 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
         {
             try
             {
-                // Regra de negócio 1: Data início < fim
-                if (evento.DataInicio >= evento.DataFim)
-                    return Result<Evento>.Failure("A data de início deve ser anterior à data de fim.", ErrorCode.VALIDATION_ERROR);
+                // Regra de negócio 1: Data início < fim (ignorar horas)
+                if (evento.DataInicio.Date >= evento.DataFim.Date)
+                    return Result<Evento>.Failure(
+                        "A data de início deve ser anterior à data de fim.",
+                        ErrorCode.VALIDATION_ERROR
+                    );
 
                 // Regra de negócio 2: Lotação > 0
                 if (evento.LotacaoMaxima < EventoRegras.LOTACAO_MINIMA)

@@ -3,9 +3,7 @@ using GestaoEventosCorporativos.Api._01_Presentation.DTOs.Responses;
 using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
 using GestaoEventosCorporativos.Api._02_Core.Entities;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Services;
-using GestaoEventosCorporativos.Api._02_Core.Shared;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -100,10 +98,17 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
         [Authorize]
         public IActionResult GetProfile()
         {
-            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var userId = _jwtService.GetUserIdFromToken(token);
-            var userEmail = _jwtService.GetUserEmailFromToken(token);
-            var userName = _jwtService.GetUserNameFromToken(token);
+            var userId = _jwtService.GetUserIdFromToken(
+                Request.Headers["Authorization"].ToString().Replace("Bearer ", "")
+            );
+
+            var userEmail = _jwtService.GetUserEmailFromToken(
+                Request.Headers["Authorization"].ToString().Replace("Bearer ", "")
+            );
+
+            var userName = _jwtService.GetUserNameFromToken(
+                Request.Headers["Authorization"].ToString().Replace("Bearer ", "")
+            );
 
             var profile = new
             {

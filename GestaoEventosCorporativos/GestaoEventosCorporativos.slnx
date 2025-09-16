@@ -1,3 +1,7 @@
 <Solution>
+  <Folder Name="/Itens de Solução/">
+    <File Path="coverlet.runsettings" />
+  </Folder>
   <Project Path="GestaoEventosCorporativos.Api/GestaoEventosCorporativos.Api.csproj" />
+  <Project Path="GestaoEventosCorporativos.Tests/GestaoEventosCorporativos.Tests.csproj" Id="9c7b68c1-a80c-4bcb-88ea-1e82b43b93f0" />
 </Solution>

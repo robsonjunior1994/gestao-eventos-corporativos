@@ -32,3 +32,74 @@ dotnet ef database update --project ../GestaoEventosCorporativos.Api --startup-p
 
 # OBS.: Caso tenha algum problema execute o comando:
 dotnet tool install --global dotnet-ef
+
+
+<summary>
+<details>Rodando analisde cobertura de teste</details>
+
+# 1) Uma vez (setup)
+
+1. No(s) projeto(s) de **teste**, instale o coletor do Coverlet:
+
+```bash
+dotnet add GestaoEventosCorporativos.Tests.csproj package coverlet.collector
+```
+
+2. Instale o **ReportGenerator** (ferramenta global pra gerar HTML):
+
+```bash
+dotnet tool install --global dotnet-reportgenerator-globaltool
+```
+
+3. (Opcional, mas recomendado) Crie um arquivo de configuração para cobertura: **`coverlet.runsettings`** na raiz do repositório:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <!-- Saída em Cobertura (compatível com vários serviços) -->
+          <Format>cobertura</Format>
+
+          <!-- Excluir atributos gerados -->
+          <ExcludeByAttribute>CompilerGeneratedAttribute,GeneratedCodeAttribute</ExcludeByAttribute>
+
+          <!-- Excluir assemblies/padrões (ajuste conforme seu naming) -->
+          <Exclude>
+            [xunit.*]*
+            [*.Tests]*      <!-- não cobrir os próprios testes -->
+          </Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
+```
+
+# 2) Comando do dia a dia (rodar cobertura)
+
+Na raiz da solução/projeto:
+
+```bash
+dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+```
+
+Isso vai gerar arquivos `coverage.cobertura.xml` dentro de `TestResults/**/`.
+
+Agora gere o relatório HTML:
+
+```bash
+reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+```
+
+Abra o relatório no Windows:
+
+```bash
+start coveragereport\index.html
+```
+
+</summary>
+
+
