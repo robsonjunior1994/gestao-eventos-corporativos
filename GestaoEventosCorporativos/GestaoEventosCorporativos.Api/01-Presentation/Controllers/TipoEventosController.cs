@@ -3,12 +3,14 @@ using GestaoEventosCorporativos.Api._01_Presentation.DTOs.Responses;
 using GestaoEventosCorporativos.Api._01_Presentation.Helpers;
 using GestaoEventosCorporativos.Api._02_Core.Entities;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TipoEventosController : ControllerBase
     {
         private readonly ITipoEventoService _tipoEventoService;

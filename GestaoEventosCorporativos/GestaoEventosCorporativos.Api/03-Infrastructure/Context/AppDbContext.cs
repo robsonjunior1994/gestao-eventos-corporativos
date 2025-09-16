@@ -10,6 +10,7 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Context
         {
         }
 
+        public DbSet<User> Users { get; set; }
         public DbSet<Evento> Eventos { get; set; }
         public DbSet<TipoEvento> TiposEventos { get; set; }
         public DbSet<Participante> Participantes { get; set; }
