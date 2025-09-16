@@ -104,7 +104,6 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
                 if (existing == null)
                     return Result<Fornecedor>.Failure("Fornecedor não encontrado.", ErrorCode.NOT_FOUND);
 
-                // Validação de CNPJ duplicado (exceto o próprio fornecedor)
                 var fornecedorByCnpj = await _fornecedorRepository.GetByCnpjAsync(fornecedor.CNPJ);
                 if (fornecedorByCnpj != null && fornecedorByCnpj.Id != fornecedor.Id)
                     return Result<Fornecedor>.Failure("Já existe outro fornecedor com este CNPJ.", ErrorCode.RESOURCE_ALREADY_EXISTS);

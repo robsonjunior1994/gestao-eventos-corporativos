@@ -293,7 +293,6 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 return StatusCode(statusCode, response);
             }
 
-            // Retorna DTO enxuto para não causar ciclos na serialização
             var fornecedorDto = new FornecedorResponse
             {
                 Id = result.Data.Id,

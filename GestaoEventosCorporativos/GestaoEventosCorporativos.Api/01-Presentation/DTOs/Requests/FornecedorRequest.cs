@@ -7,7 +7,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.DTOs.Requests
         [Required, StringLength(150)]
         public string NomeServico { get; set; } = string.Empty;
 
-        [Required, StringLength(18)] // você pode validar o formato depois
+        [Required, StringLength(18)] 
         public string CNPJ { get; set; } = string.Empty;
 
         [Range(0.01, double.MaxValue, ErrorMessage = "O valor base deve ser maior que zero.")]

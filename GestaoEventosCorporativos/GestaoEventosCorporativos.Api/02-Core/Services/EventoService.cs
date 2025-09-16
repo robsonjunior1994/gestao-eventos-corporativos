@@ -45,7 +45,6 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
                 if (tipoEvento == null)
                     return Result<Evento>.Failure("O tipo de evento informado não existe.", ErrorCode.NOT_FOUND);
 
-                // Persistência
                 await _eventoRepository.AddAsync(evento);
 
                 return Result<Evento>.Success(evento);
@@ -215,7 +214,6 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
                 if (evento.Fornecedores.Any(f => f.FornecedorId == fornecedor.Id))
                     return Result<Fornecedor>.Failure("Fornecedor já está vinculado a este evento.", ErrorCode.RESOURCE_ALREADY_EXISTS);
 
-                // Orçamento do evento
                 if (fornecedor.ValorBase > evento.SaldoOrcamento)
                     return Result<Fornecedor>.Failure("O valor base do fornecedor excede o saldo do orçamento do evento.", ErrorCode.VALIDATION_ERROR);
 
