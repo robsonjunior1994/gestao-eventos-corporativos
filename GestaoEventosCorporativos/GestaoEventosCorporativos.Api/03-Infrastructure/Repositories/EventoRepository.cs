@@ -39,7 +39,7 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<Evento?> GetByIdWithAggregatesAsync(int id)
+        public async Task<Evento> GetByIdWithAggregatesAsync(int id)
         {
             return await _context.Eventos
                 .Include(e => e.TipoEvento)

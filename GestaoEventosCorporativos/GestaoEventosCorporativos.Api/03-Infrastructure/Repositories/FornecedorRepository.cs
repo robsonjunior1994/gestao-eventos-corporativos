@@ -21,14 +21,14 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Fornecedor?> GetByIdAsync(int id)
+        public async Task<Fornecedor> GetByIdAsync(int id)
         {
             return await _context.Fornecedores
                 .AsNoTracking()
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
 
-        public async Task<Fornecedor?> GetByCnpjAsync(string cnpj)
+        public async Task<Fornecedor> GetByCnpjAsync(string cnpj)
         {
             return await _context.Fornecedores
                 .AsNoTracking()
