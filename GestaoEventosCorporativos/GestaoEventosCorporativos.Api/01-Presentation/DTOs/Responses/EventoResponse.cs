@@ -14,8 +14,6 @@
         public decimal ValorTotalFornecedores { get; set; }
         public decimal SaldoOrcamento { get; set; }
         public string TipoEventoDescricao { get; set; }
-
-        // Extras para enriquecer a resposta (opcionais)
         public List<string> Participantes { get; set; } = new();
         public List<string> Fornecedores { get; set; } = new();
     }

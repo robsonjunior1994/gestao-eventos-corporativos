@@ -30,6 +30,18 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        public async Task<Evento?> GetByIdWithAggregatesAsync(int id)
+        {
+            return await _context.Eventos
+                .Include(e => e.TipoEvento)
+                .Include(e => e.Participantes)
+                    .ThenInclude(pe => pe.Participante)
+                .Include(e => e.Fornecedores)
+                    .ThenInclude(ef => ef.Fornecedor)
+                .AsNoTracking() 
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
+
         public async Task AddAsync(Evento evento)
         {
             await _context.Eventos.AddAsync(evento);

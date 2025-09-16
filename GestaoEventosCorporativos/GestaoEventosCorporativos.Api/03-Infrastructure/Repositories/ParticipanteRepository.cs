@@ -16,20 +16,33 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
 
         public async Task<IEnumerable<Participante>> GetAllAsync()
         {
-            return await _context.Participantes.AsNoTracking().ToListAsync();
+            return await _context.Participantes
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public async Task<Participante?> GetByIdAsync(int id)
+        public async Task<Participante> GetByIdAsync(int id)
         {
-            return await _context.Participantes.AsNoTracking()
+            return await _context.Participantes
+                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<Participante?> GetByCpfAsync(string cpf)
+        public async Task<Participante> GetByCpfAsync(string cpf)
         {
-            return await _context.Participantes.AsNoTracking()
+            return await _context.Participantes
+                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.CPF == cpf);
         }
+
+        public async Task<Participante> GetByCpfWithEventosAsync(string cpf)
+        {
+            return await _context.Participantes
+                .Include(p => p.Eventos)
+                    .ThenInclude(pe => pe.Evento)
+                .FirstOrDefaultAsync(p => p.CPF == cpf);
+        }
+
 
         public async Task AddAsync(Participante participante)
         {

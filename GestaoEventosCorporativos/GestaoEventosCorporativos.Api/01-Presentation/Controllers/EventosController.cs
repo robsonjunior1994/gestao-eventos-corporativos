@@ -78,11 +78,22 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 DataFim = result.Data.DataFim,
                 Local = result.Data.Local,
                 Endereco = result.Data.Endereco,
+                Observacoes = result.Data.Observacoes,
                 LotacaoMaxima = result.Data.LotacaoMaxima,
                 OrcamentoMaximo = result.Data.OrcamentoMaximo,
                 ValorTotalFornecedores = result.Data.ValorTotalFornecedores,
                 SaldoOrcamento = result.Data.SaldoOrcamento,
-                TipoEventoDescricao = result.Data.TipoEvento?.Descricao
+                TipoEventoDescricao = result.Data.TipoEvento?.Descricao,
+
+                Participantes = result.Data.Participantes?
+                    .Where(pe => pe.Participante != null)
+                    .Select(pe => pe.Participante!.NomeCompleto+" CPF:" + pe.Participante!.CPF)
+                    .ToList() ?? new List<string>(),
+
+                Fornecedores = result.Data.Fornecedores?
+                    .Where(ef => ef.Fornecedor != null)
+                    .Select(ef => ef.Fornecedor!.NomeServico) // ou NomeFantasia se for seu campo
+                    .ToList() ?? new List<string>()
             };
 
             response.Success("Event retrieved successfully.",
@@ -224,6 +235,40 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
                 StatusCodes.Status200OK.ToString(), true);
 
             return Ok(response);
+        }
+
+        [HttpPost("{eventoId}/participantes")]
+        public async Task<IActionResult> AddParticipante(int eventoId, [FromBody] ParticipanteEventoRequest participanteEventoRequest)
+        {
+            var response = new ResponseDTO();
+
+            if (string.IsNullOrWhiteSpace(participanteEventoRequest.CPF))
+            {
+                response.Failure("O CPF é obrigatório.",
+                    StatusCodes.Status400BadRequest.ToString(), participanteEventoRequest);
+
+                return StatusCode(StatusCodes.Status400BadRequest, response);
+            }
+
+            var result = await _eventoService.AddParticipanteByCpfAsync(eventoId, participanteEventoRequest.CPF);
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.Failure(result.ErrorMessage, statusCode.ToString(), participanteEventoRequest);
+                return StatusCode(statusCode, response);
+            }
+
+            response.Success("Participante adicionado ao evento com sucesso.",
+                StatusCodes.Status201Created.ToString(), new ParticipanteResponse
+                {
+                    Id = result.Data.Id,
+                    NomeCompleto = result.Data.NomeCompleto,
+                    CPF = result.Data.CPF,
+                    Tipo = result.Data.Tipo.ToString()
+                });
+
+            return StatusCode(StatusCodes.Status201Created, response);
         }
     }
 }

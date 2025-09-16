@@ -28,10 +28,12 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
 
         public async Task<IEnumerable<TipoEvento>> GetAllAsync()
         {
-            return await _context.TiposEventos.ToListAsync();
+            return await _context.TiposEventos
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public async Task<TipoEvento?> GetByIdAsync(int id)
+        public async Task<TipoEvento> GetByIdAsync(int id)
         {
             return await _context.TiposEventos
                 .FirstOrDefaultAsync(t => t.Id == id);
@@ -42,9 +44,10 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
             _context.TiposEventos.Update(tipoEvento);
             await _context.SaveChangesAsync();
         }
-        public async Task<TipoEvento?> GetByDescricaoAsync(string descricao)
+        public async Task<TipoEvento> GetByDescricaoAsync(string descricao)
         {
             return await _context.TiposEventos
+                .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.Descricao.ToLower() == descricao.ToLower());
         }
     }
