@@ -4,4 +4,5 @@
   </Folder>
   <Project Path="GestaoEventosCorporativos.Api/GestaoEventosCorporativos.Api.csproj" />
   <Project Path="GestaoEventosCorporativos.Tests/GestaoEventosCorporativos.Tests.csproj" Id="9c7b68c1-a80c-4bcb-88ea-1e82b43b93f0" />
+  <Project Path="GestaoEventosCorporativos.Wpf/GestaoEventosCorporativos.Wpf.csproj" Id="6e322292-f11a-4daa-9426-b4c7f4eade89" />
 </Solution>
