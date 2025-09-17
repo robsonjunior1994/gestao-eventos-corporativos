@@ -41,47 +41,61 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
+            Assert.Contains("Data de início deve ser anterior à data de fim", result.ErrorMessage);
         }
 
         [Fact]
         public async Task AddAsync_DeveFalhar_QuandoLotacaoMenorQueMinimo()
         {
+            // Arrange
             var evento = new Evento("Teste", DateTime.Now, DateTime.Now.AddDays(1), "RJ", "Endereço", "Obs", 0, 1000, 1);
 
+            // Act
             var result = await _service.AddAsync(evento);
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
+            Assert.Contains("A lotação máxima deve ser maior que zero.", result.ErrorMessage);
         }
 
         [Fact]
         public async Task AddAsync_DeveFalhar_QuandoOrcamentoMenorQueMinimo()
         {
+            // Arrange
             var evento = new Evento("Teste", DateTime.Now, DateTime.Now.AddDays(1), "RJ", "Endereço", "Obs", 10, 0, 1);
 
+            // Act
             var result = await _service.AddAsync(evento);
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
+            Assert.Contains("O orçamento máximo deve ser maior que zero.", result.ErrorMessage);
         }
 
         [Fact]
         public async Task AddAsync_DeveFalhar_QuandoTipoEventoNaoExiste()
         {
+            // Arrange
             var evento = new Evento("Teste", DateTime.Now, DateTime.Now.AddDays(1), "RJ", "Endereço", "Obs", 10, 1000, 99);
 
             _tipoEventoRepoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((TipoEvento)null);
 
+            // Act
             var result = await _service.AddAsync(evento);
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Contains("Tipo de evento não encontrado.", result.ErrorMessage);
         }
 
         [Fact]
         public async Task AddAsync_DeveCriarEvento_QuandoDadosValidos()
         {
+            // Arrange
             var evento = new Evento("Teste", DateTime.Now, DateTime.Now.AddDays(1), "RJ", "Endereço", "Obs", 10, 1000, 1);
 
             _tipoEventoRepoMock.Setup(r => r.GetByIdAsync(1))
@@ -90,8 +104,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _eventoRepoMock.Setup(r => r.AddAsync(evento))
                 .Returns(Task.CompletedTask);
 
+            // Act
             var result = await _service.AddAsync(evento);
 
+            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(evento, result.Data);
         }
@@ -99,18 +115,23 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task DeleteAsync_DeveFalhar_QuandoEventoNaoEncontrado()
         {
+            // Arrange
             _eventoRepoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((Evento)null);
 
+            // Act
             var result = await _service.DeleteAsync(1);
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("Evento não encontrado.", result.ErrorMessage);
         }
 
         [Fact]
         public async Task DeleteAsync_DeveExcluir_QuandoEventoExiste()
         {
+            // Arrange
             var evento = new Evento("Teste", DateTime.Now, DateTime.Now.AddDays(1), "RJ", "Endereço", "Obs", 10, 1000, 1);
 
             _eventoRepoMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
@@ -119,22 +140,255 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _eventoRepoMock.Setup(r => r.DeleteAsync(evento))
                 .Returns(Task.CompletedTask);
 
+            // Act
             var result = await _service.DeleteAsync(1);
 
+            // Assert
             Assert.True(result.IsSuccess);
             Assert.True(result.Data);
         }
 
-        // ---------- AddParticipanteByCpfAsync ----------
+        [Fact]
+        public async Task GetAllAsync_DeveRetornarSucesso_QuandoRepositorioRetornaEventos()
+        {
+            // Arrange
+            var eventos = new List<Evento>
+            {
+                new Evento("Evento A", DateTime.Today, DateTime.Today.AddDays(1),
+                           "Local A", "Endereco A", "Obs A", 100, 5000, 1),
+                new Evento("Evento B", DateTime.Today.AddDays(2), DateTime.Today.AddDays(3),
+                           "Local B", "Endereco B", "Obs B", 50, 2000, 2)
+            };
+            int totalCount = eventos.Count;
+
+            _eventoRepoMock
+                .Setup(r => r.GetAllWithAggregatesAsync(1, 10))
+                .ReturnsAsync((eventos, totalCount));
+
+            // Act
+            var result = await _service.GetAllAsync(1, 10);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Data);
+            Assert.Equal(totalCount, result.Data.TotalCount);
+            Assert.Equal(2, result.Data.Items.Count());
+            Assert.Equal("Evento A", result.Data.Items.First().Nome);
+        }
+
+        [Fact]
+        public async Task GetAllAsync_DeveRetornarSucesso_QuandoRepositorioNaoRetornaEventos()
+        {
+            // Arrange
+            var eventos = new List<Evento>();
+            int totalCount = 0;
+
+            _eventoRepoMock
+                .Setup(r => r.GetAllWithAggregatesAsync(1, 10))
+                .ReturnsAsync((eventos, totalCount));
+
+            // Act
+            var result = await _service.GetAllAsync(1, 10);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Data);
+            Assert.Empty(result.Data.Items);
+            Assert.Equal(0, result.Data.TotalCount);
+            Assert.Equal(1, result.Data.PageNumber);
+            Assert.Equal(10, result.Data.PageSize);
+        }
+
+        [Fact]
+        public async Task GetAllAsync_DeveRetornarErro_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            _eventoRepoMock
+                .Setup(r => r.GetAllWithAggregatesAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Erro no banco"));
+
+            // Act
+            var result = await _service.GetAllAsync(1, 10);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao buscar eventos.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_DeveRetornarNotFound_QuandoEventoNaoExiste()
+        {
+            // Arrange
+            _eventoRepoMock
+                .Setup(r => r.GetByIdWithAggregatesAsync(1))
+                .ReturnsAsync((Evento)null);
+
+            // Act
+            var result = await _service.GetByIdAsync(1);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("Evento não encontrado.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_DeveRetornarSucesso_QuandoEventoExiste()
+        {
+            // Arrange
+            var evento = new Evento("Evento Teste", DateTime.Today, DateTime.Today.AddDays(1),
+                "Local", "Endereco", "Obs", 100, 5000, 1);
+
+            _eventoRepoMock
+                .Setup(r => r.GetByIdWithAggregatesAsync(1))
+                .ReturnsAsync(evento);
+
+            // Act
+            var result = await _service.GetByIdAsync(1);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Data);
+            Assert.Equal("Evento Teste", result.Data.Nome);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_DeveRetornarErroDatabase_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            _eventoRepoMock
+                .Setup(r => r.GetByIdWithAggregatesAsync(It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Erro no banco"));
+
+            // Act
+            var result = await _service.GetByIdAsync(1);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Ocorreu um erro ao buscar o evento.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_DeveFalhar_QuandoDataInicioMaiorOuIgualDataFim()
+        {
+            // Arrange
+            var evento = new Evento("Teste", DateTime.Today, DateTime.Today,
+                "Local", "Endereco", "Obs", 10, 1000, 1);
+
+            // Act
+            var result = await _service.UpdateAsync(evento);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
+            Assert.Equal("A data de início deve ser anterior à data de fim.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_DeveFalhar_QuandoLotacaoMenorQueMinima()
+        {
+            // Arrange
+            var evento = new Evento("Teste", DateTime.Today, DateTime.Today.AddDays(1),
+                "Local", "Endereco", "Obs", 0, 1000, 1);
+
+            // Act
+            var result = await _service.UpdateAsync(evento);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
+            Assert.Equal("A lotação máxima deve ser maior que zero.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_DeveFalhar_QuandoOrcamentoMenorQueMinimo()
+        {
+            // Arrange
+            var evento = new Evento("Teste", DateTime.Today, DateTime.Today.AddDays(1),
+                "Local", "Endereco", "Obs", 10, 0, 1);
+
+            // Act
+            var result = await _service.UpdateAsync(evento);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
+            Assert.Equal("O orçamento deve ser maior que zero.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_DeveFalhar_QuandoTipoEventoNaoExistir()
+        {
+            // Arrange
+            var evento = new Evento("Teste", DateTime.Today, DateTime.Today.AddDays(1),
+                "Local", "Endereco", "Obs", 10, 1000, 1);
+
+            _tipoEventoRepoMock
+                .Setup(r => r.GetByIdAsync(evento.TipoEventoId))
+                .ReturnsAsync((TipoEvento)null);
+
+            // Act
+            var result = await _service.UpdateAsync(evento);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("O tipo de evento informado não existe.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_DeveRetornarSucesso_QuandoEventoValido()
+        {
+            // Arrange
+            var evento = new Evento("Teste", DateTime.Today, DateTime.Today.AddDays(1),
+                "Local", "Endereco", "Obs", 10, 1000, 1);
+
+            _tipoEventoRepoMock
+                .Setup(r => r.GetByIdAsync(evento.TipoEventoId))
+                .ReturnsAsync(new TipoEvento { Id = 1, Descricao = "Tipo Teste" });
+
+            // Act
+            var result = await _service.UpdateAsync(evento);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.Equal(evento, result.Data);
+            _eventoRepoMock.Verify(r => r.UpdateAsync(evento), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var evento = new Evento("Teste", DateTime.Today, DateTime.Today.AddDays(1),
+                "Local", "Endereco", "Obs", 10, 1000, 1);
+
+            _tipoEventoRepoMock
+                .Setup(r => r.GetByIdAsync(evento.TipoEventoId))
+                .ThrowsAsync(new Exception("Erro no banco"));
+
+            // Act
+            var result = await _service.UpdateAsync(evento);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Ocorreu um erro ao atualizar o evento.", result.ErrorMessage);
+        }
 
         [Fact]
         public async Task AddParticipanteByCpfAsync_DeveFalhar_QuandoEventoNaoExiste()
         {
+            // Arrange
             _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(It.IsAny<int>()))
                            .ReturnsAsync((Evento)null);
 
+            // Act
             var result = await _service.AddParticipanteByCpfAsync(1, "12345678901");
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
             Assert.Equal("Evento não encontrado.", result.ErrorMessage);
@@ -144,6 +398,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddParticipanteByCpfAsync_DeveFalhar_QuandoParticipanteNaoExiste()
         {
+            // Arrange
             var evento = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 100, 1000m, 1)
@@ -155,8 +410,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _participanteRepoMock.Setup(r => r.GetByCpfWithEventosAsync("12345678901"))
                                  .ReturnsAsync((Participante)null);
 
+            // Act
             var result = await _service.AddParticipanteByCpfAsync(1, "12345678901");
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
             Assert.Equal("Participante não encontrado.", result.ErrorMessage);
@@ -166,6 +423,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddParticipanteByCpfAsync_DeveFalhar_QuandoParticipanteJaVinculadoAoEvento()
         {
+            // Arrange
             var evento = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 100, 1000m, 1)
@@ -176,10 +434,9 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
                 Id = 7,
                 NomeCompleto = "Ana Maria",
                 CPF = "12345678901",
-                Eventos = new List<ParticipanteEvento>() // pode estar vazio; o vínculo que importa é no evento atual
+                Eventos = new List<ParticipanteEvento>() 
             };
 
-            // já vinculado
             evento.Participantes.Add(new ParticipanteEvento
             {
                 EventoId = evento.Id,
@@ -194,8 +451,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _participanteRepoMock.Setup(r => r.GetByCpfWithEventosAsync("12345678901"))
                                  .ReturnsAsync(participante);
 
+            // Act
             var result = await _service.AddParticipanteByCpfAsync(1, "12345678901");
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.RESOURCE_ALREADY_EXISTS, result.ErrorCode);
             Assert.Equal("Participante já está vinculado a este evento.", result.ErrorMessage);
@@ -205,6 +464,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddParticipanteByCpfAsync_DeveFalhar_QuandoLotacaoMaximaAtingida()
         {
+            // Arrange
             var evento = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 1, 1000m, 1)
@@ -218,17 +478,20 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1)).ReturnsAsync(evento);
             _participanteRepoMock.Setup(r => r.GetByCpfWithEventosAsync("12345678901")).ReturnsAsync(participante);
 
+            // Act
             var result = await _service.AddParticipanteByCpfAsync(1, "12345678901");
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
-            Assert.Contains("lotação máxima", result.ErrorMessage, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("Não é possível adicionar mais participantes. A lotação máxima do evento já foi atingida.", result.ErrorMessage);
             _eventoRepoMock.Verify(r => r.UpdateAsync(It.IsAny<Evento>()), Times.Never);
         }
 
         [Fact]
         public async Task AddParticipanteByCpfAsync_DeveFalhar_QuandoExisteConflitoDeDatasComOutroEventoDoParticipante()
         {
+            // Arrange
             // evento alvo: 10-11 jan 2025
             var alvo = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
@@ -255,8 +518,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1)).ReturnsAsync(alvo);
             _participanteRepoMock.Setup(r => r.GetByCpfWithEventosAsync("12345678901")).ReturnsAsync(participante);
 
+            // Act
             var result = await _service.AddParticipanteByCpfAsync(1, "12345678901");
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
             Assert.Contains("inscrito no evento 'Meetup'", result.ErrorMessage);
@@ -266,6 +531,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddParticipanteByCpfAsync_DeveAdicionar_ComSucesso()
         {
+            // Arrange
             var alvo = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 2, 1000m, 1)
@@ -283,8 +549,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _participanteRepoMock.Setup(r => r.GetByCpfWithEventosAsync("12345678901")).ReturnsAsync(participante);
             _eventoRepoMock.Setup(r => r.UpdateAsync(It.IsAny<Evento>())).Returns(Task.CompletedTask);
 
+            // Act
             var result = await _service.AddParticipanteByCpfAsync(1, "12345678901");
 
+            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(participante, result.Data);
             Assert.Single(alvo.Participantes);
@@ -295,11 +563,14 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddFornecedorByCnpjAsync_DeveFalhar_QuandoEventoNaoExiste()
         {
+            // Arrange
             _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(It.IsAny<int>()))
                            .ReturnsAsync((Evento)null);
 
+            // Act
             var result = await _service.AddFornecedorByCnpjAsync(1, "11111111000191");
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
             Assert.Equal("Evento não encontrado.", result.ErrorMessage);
@@ -309,6 +580,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddFornecedorByCnpjAsync_DeveFalhar_QuandoCnpjVazio()
         {
+            // Arrange
             var evento = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 100, 1000m, 1)
@@ -316,8 +588,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
 
             _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1)).ReturnsAsync(evento);
 
+            // Act
             var result = await _service.AddFornecedorByCnpjAsync(1, "  ");
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
             Assert.Equal("O CNPJ é obrigatório.", result.ErrorMessage);
@@ -327,6 +601,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddFornecedorByCnpjAsync_DeveFalhar_QuandoFornecedorNaoExiste()
         {
+            // Arrange
             var evento = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 100, 1000m, 1)
@@ -336,8 +611,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _fornecedorRepoMock.Setup(r => r.GetByCnpjAsync("11111111000191"))
                                .ReturnsAsync((Fornecedor)null);
 
+            // Act
             var result = await _service.AddFornecedorByCnpjAsync(1, "11111111000191");
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
             Assert.Equal("Fornecedor não encontrado.", result.ErrorMessage);
@@ -347,6 +624,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddFornecedorByCnpjAsync_DeveFalhar_QuandoFornecedorJaVinculado()
         {
+            // Arrange
             var evento = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 100, 1000m, 1)
@@ -365,8 +643,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1)).ReturnsAsync(evento);
             _fornecedorRepoMock.Setup(r => r.GetByCnpjAsync(fornecedor.CNPJ)).ReturnsAsync(fornecedor);
 
+            // Act
             var result = await _service.AddFornecedorByCnpjAsync(1, fornecedor.CNPJ);
 
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.RESOURCE_ALREADY_EXISTS, result.ErrorCode);
             Assert.Equal("Fornecedor já está vinculado a este evento.", result.ErrorMessage);
@@ -376,6 +656,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddFornecedorByCnpjAsync_DeveFalhar_QuandoValorBaseExcedeSaldo()
         {
+            // Arrange
             var evento = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 100, 300m, 1)
@@ -386,8 +667,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1)).ReturnsAsync(evento);
             _fornecedorRepoMock.Setup(r => r.GetByCnpjAsync(fornecedor.CNPJ)).ReturnsAsync(fornecedor);
 
+            // Act
             var result = await _service.AddFornecedorByCnpjAsync(1, fornecedor.CNPJ);
-
+            
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
             Assert.Equal("O valor base do fornecedor excede o saldo do orçamento do evento.", result.ErrorMessage);
@@ -397,6 +680,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public async Task AddFornecedorByCnpjAsync_DeveAdicionar_ComSucesso()
         {
+            // Arrange
             var evento = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 100, 1000m, 1)
@@ -408,8 +692,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             _fornecedorRepoMock.Setup(r => r.GetByCnpjAsync(fornecedor.CNPJ)).ReturnsAsync(fornecedor);
             _eventoRepoMock.Setup(r => r.UpdateAsync(It.IsAny<Evento>())).Returns(Task.CompletedTask);
 
+            // Act
             var result = await _service.AddFornecedorByCnpjAsync(1, fornecedor.CNPJ);
 
+            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(fornecedor, result.Data);
             Assert.Single(evento.Fornecedores);
