@@ -4,8 +4,8 @@ Esse projeto é parte de um desafio de habilidade que estou realizando de uma em
 
 # Passos para utilizar a aplicação
 
-## Configurando banco de dados SQL Server com Docker
-
+<details>
+<summary> Configurando banco de dados SQL Server com Docker </summary>
 1. Baixar imagem do sql server:
 
 docker pull mcr.microsoft.com/mssql/server:2022-latest
@@ -33,9 +33,13 @@ dotnet ef database update --project ../GestaoEventosCorporativos.Api --startup-p
 # OBS.: Caso tenha algum problema execute o comando:
 dotnet tool install --global dotnet-ef
 
+</details>
 
-<summary>
-<details> Rodando analisde cobertura de teste </details>
+
+# Rodando cobertura de teste
+<details>
+<summary> Clique aqui </summary>
+
 
 # 1) Uma vez (setup)
 
@@ -99,8 +103,6 @@ Abra o relatório no Windows:
 ```bash
 start coveragereport\index.html
 ```
-
-
-</summary>
+</details>
 
 
