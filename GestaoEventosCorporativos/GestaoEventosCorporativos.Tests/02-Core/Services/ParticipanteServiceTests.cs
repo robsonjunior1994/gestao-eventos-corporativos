@@ -82,6 +82,32 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
+        public async Task AddAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var participante = new Participante
+            {
+                Id = 1,
+                NomeCompleto = "João Silva",
+                CPF = "12345678901",
+                Telefone = "11999999999",
+                Tipo = TipoParticipante.Interno
+            };
+
+            _participanteRepoMock
+                .Setup(r => r.GetByCpfAsync(participante.CPF))
+                .ThrowsAsync(new Exception("Erro inesperado"));
+
+            // Act
+            var result = await _service.AddAsync(participante);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao criar participante.", result.ErrorMessage);
+        }
+
+        [Fact]
         public async Task UpdateAsync_DeveRetornarErro_QuandoParticipanteNaoExiste()
         {
             var participante = new Participante { Id = 1, NomeCompleto = "Robson", CPF = "12345678901", Tipo = TipoParticipante.Interno };
@@ -140,6 +166,25 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
+        public async Task DeleteAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            int participanteId = 1;
+
+            _participanteRepoMock
+                .Setup(r => r.GetByIdAsync(participanteId))
+                .ThrowsAsync(new Exception("Erro inesperado"));
+
+            // Act
+            var result = await _service.DeleteAsync(participanteId);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao excluir participante.", result.ErrorMessage);
+        }
+
+        [Fact]
         public async Task GetAllAsync_DeveRetornarParticipantesComSucesso()
         {
             // Arrange
@@ -184,7 +229,60 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
-        public async Task GetByIdAsync_DeveRetornarErro_QuandoNaoEncontrar()
+        public async Task GetByIdAsync_DeveRetornarNotFound_QuandoParticipanteNaoExiste()
+        {
+            // Arrange
+            _participanteRepoMock
+                .Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((Participante)null);
+
+            // Act
+            var result = await _service.GetByIdAsync(1);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("Participante não encontrado.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_DeveRetornarSucesso_QuandoParticipanteEncontrado()
+        {
+            // Arrange
+            var participante = new Participante { Id = 1, NomeCompleto = "Robson Junior", CPF = "12345678900" };
+            _participanteRepoMock
+                .Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync(participante);
+
+            // Act
+            var result = await _service.GetByIdAsync(1);
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Data);
+            Assert.Equal("Robson Junior", result.Data.NomeCompleto);
+            Assert.Equal(1, result.Data.Id);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            _participanteRepoMock
+                .Setup(r => r.GetByIdAsync(1))
+                .ThrowsAsync(new Exception("Falha no banco"));
+
+            // Act
+            var result = await _service.GetByIdAsync(1);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao buscar participante.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_DeveRetornarErro_QuandoNaoEncontrar()
         {
             //Arrange
             var participante = new Participante { Id = 1, NomeCompleto = "Robson", CPF = "12345678901", Tipo = TipoParticipante.Interno };
