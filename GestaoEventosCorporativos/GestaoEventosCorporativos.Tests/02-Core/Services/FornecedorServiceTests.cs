@@ -63,7 +63,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
-        public async Task AddAsync_DeveFalhar_QuandoCnpjDuplicado()
+        public async Task AddAsync_DeveFalhar_QuandoCnpjExistente()
         {
             // Arrange
             var fornecedor = new Fornecedor { NomeServico = "Som", CNPJ = "12345678000199", ValorBase = 200 };
@@ -217,7 +217,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
             Assert.Equal("O nome do serviço é obrigatório.", result.ErrorMessage);
         }
-
+        [Fact]
         public async Task UpdateAsync_DeveFalhar_QuandoCnpjInvalido()
         {
             // Arrange
@@ -234,7 +234,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
             Assert.Equal("O CNPJ é obrigatório.", result.ErrorMessage);
         }
-
+        [Fact]
         public async Task UpdateAsync_DeveFalhar_QuandoValorBaseInvalido()
         {
             // Arrange
@@ -269,7 +269,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
-        public async Task UpdateAsync_DeveFalhar_QuandoCnpjDuplicado()
+        public async Task UpdateAsync_DeveFalhar_QuandoCnpjExistente()
         {
             // Arrange
             var fornecedor = new Fornecedor { Id = 1, NomeServico = "Som", CNPJ = "12345678000199", ValorBase = 200 };
