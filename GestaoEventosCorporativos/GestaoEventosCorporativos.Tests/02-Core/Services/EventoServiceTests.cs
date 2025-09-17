@@ -33,7 +33,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         public async Task AddAsync_DeveFalhar_QuandoDataInicioMaiorOuIgualDataFim()
         {
             // Arrange
-            var evento = new Evento("Teste", DateTime.Now, DateTime.Now, "RJ", "Endereço", "Obs", 100, 1000, 1);
+            var evento = new Evento("Teste", DateTime.Now.AddDays(1), DateTime.Now, "RJ", "Endereço", "Obs", 100, 1000, 1);
 
             // Act
             var result = await _service.AddAsync(evento);
@@ -41,7 +41,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
-            Assert.Contains("Data de início deve ser anterior à data de fim", result.ErrorMessage);
+            Assert.Contains("A data de início deve ser anterior à data de fim.", result.ErrorMessage);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
-            Assert.Contains("O orçamento máximo deve ser maior que zero.", result.ErrorMessage);
+            Assert.Contains("O orçamento deve ser maior que zero.", result.ErrorMessage);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
-            Assert.Contains("Tipo de evento não encontrado.", result.ErrorMessage);
+            Assert.Contains("O tipo de evento informado não existe.", result.ErrorMessage);
         }
 
         [Fact]
