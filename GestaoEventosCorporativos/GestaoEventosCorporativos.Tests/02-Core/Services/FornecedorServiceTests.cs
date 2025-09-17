@@ -2,9 +2,7 @@
 using GestaoEventosCorporativos.Api._02_Core.Entities;
 using GestaoEventosCorporativos.Api._02_Core.Interfaces.Repositories;
 using GestaoEventosCorporativos.Api._02_Core.Services;
-using GestaoEventosCorporativos.Api._02_Core.Shared;
 using Moq;
-using Xunit;
 
 namespace GestaoEventosCorporativos.Tests._02_Core.Services
 {
