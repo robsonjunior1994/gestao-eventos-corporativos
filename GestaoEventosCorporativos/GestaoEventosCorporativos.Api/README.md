@@ -35,7 +35,7 @@ dotnet tool install --global dotnet-ef
 
 
 <summary>
-<details>Rodando analisde cobertura de teste</details>
+<details> Rodando analisde cobertura de teste </details>
 
 # 1) Uma vez (setup)
 
@@ -99,6 +99,7 @@ Abra o relatório no Windows:
 ```bash
 start coveragereport\index.html
 ```
+
 
 </summary>
 
