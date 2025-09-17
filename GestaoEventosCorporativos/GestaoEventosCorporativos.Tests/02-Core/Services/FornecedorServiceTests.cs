@@ -98,6 +98,32 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
+        public async Task AddAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var fornecedor = new Fornecedor
+            {
+                Id = 1,
+                NomeServico = "Buffet",
+                CNPJ = "12345678000199",
+                ValorBase = 1000
+            };
+
+            _repoMock
+                .Setup(r => r.GetByCnpjAsync(fornecedor.CNPJ))
+                .ThrowsAsync(new Exception("Erro inesperado"));
+
+            // Act
+            var result = await _service.AddAsync(fornecedor);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao criar fornecedor.", result.ErrorMessage);
+        }
+
+
+        [Fact]
         public async Task DeleteAsync_DeveFalhar_QuandoNaoEncontrado()
         {
             // Arrange
@@ -125,6 +151,25 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             // Assert
             Assert.True(result.IsSuccess);
             _repoMock.Verify(r => r.DeleteAsync(fornecedor), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            int fornecedorId = 1;
+
+            _repoMock
+                .Setup(r => r.GetByIdAsync(fornecedorId))
+                .ThrowsAsync(new Exception("Erro inesperado"));
+
+            // Act
+            var result = await _service.DeleteAsync(fornecedorId);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao excluir fornecedor.", result.ErrorMessage);
         }
 
         [Fact]
@@ -171,6 +216,25 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
+        public async Task GetAllAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            int pageNumber = 1, pageSize = 10;
+
+            _repoMock
+                .Setup(r => r.GetAllAsync(pageNumber, pageSize))
+                .ThrowsAsync(new Exception("Erro inesperado"));
+
+            // Act
+            var result = await _service.GetAllAsync(pageNumber, pageSize);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao buscar fornecedores.", result.ErrorMessage);
+        }
+
+        [Fact]
         public async Task GetByIdAsync_DeveRetornarFornecedor_QuandoEncontrado()
         {
             // Arrange
@@ -198,6 +262,25 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
             Assert.Equal("Fornecedor não encontrado.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            int fornecedorId = 1;
+
+            _repoMock
+                .Setup(r => r.GetByIdAsync(fornecedorId))
+                .ThrowsAsync(new Exception("Erro no banco"));
+
+            // Act
+            var result = await _service.GetByIdAsync(fornecedorId);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao buscar fornecedor.", result.ErrorMessage);
         }
 
         [Fact]
@@ -303,5 +386,39 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.True(result.IsSuccess);
             _repoMock.Verify(r => r.UpdateAsync(fornecedor), Times.Once);
         }
+
+        [Fact]
+        public async Task UpdateAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var fornecedor = new Fornecedor
+            {
+                Id = 1,
+                NomeServico = "Buffet",
+                CNPJ = "12345678000190",
+                ValorBase = 1000
+            };
+
+            _repoMock
+                .Setup(r => r.GetByIdAsync(fornecedor.Id))
+                .ReturnsAsync(fornecedor);
+
+            _repoMock
+                .Setup(r => r.GetByCnpjAsync(fornecedor.CNPJ))
+                .ReturnsAsync((Fornecedor)null);
+
+            _repoMock
+                .Setup(r => r.UpdateAsync(fornecedor))
+                .ThrowsAsync(new Exception("Erro no banco"));
+
+            // Act
+            var result = await _service.UpdateAsync(fornecedor);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao atualizar fornecedor.", result.ErrorMessage);
+        }
+
     }
 }
