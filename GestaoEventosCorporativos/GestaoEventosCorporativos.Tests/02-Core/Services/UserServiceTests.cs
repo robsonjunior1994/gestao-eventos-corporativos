@@ -91,6 +91,31 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
+        public async Task AddAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var user = new User
+            {
+                Id = 1,
+                Name = "Robson",
+                Email = "robson@example.com",
+                Password = "senha123"
+            };
+
+            _userRepoMock
+                .Setup(r => r.GetByEmailAsync(It.IsAny<string>()))
+                .ThrowsAsync(new Exception("Falha inesperada no banco"));
+
+            // Act
+            var result = await _service.AddAsync(user);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao criar usuário.", result.ErrorMessage);
+        }
+
+        [Fact]
         public async Task AddAsync_DeveCriarUsuario_QuandoValido()
         {
             //Arrange
@@ -167,5 +192,24 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.Equal("jwt_token", result.Data);
         }
 
+        [Fact]
+        public async Task LoginAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var email = "robson@example.com";
+            var senha = "senha123";
+
+            _userRepoMock
+                .Setup(r => r.GetByEmailAsync(It.IsAny<string>()))
+                .ThrowsAsync(new Exception("Falha inesperada no banco"));
+
+            // Act
+            var result = await _service.LoginAsync(email, senha);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao realizar login.", result.ErrorMessage);
+        }
     }
 }
