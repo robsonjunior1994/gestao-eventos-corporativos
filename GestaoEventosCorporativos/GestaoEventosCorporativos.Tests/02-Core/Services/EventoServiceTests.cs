@@ -111,6 +111,38 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.True(result.IsSuccess);
             Assert.Equal(evento, result.Data);
         }
+        [Fact]
+        public async Task AddAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var evento = new Evento(
+                nome: "Evento Teste",
+                dataInicio: DateTime.Now,
+                dataFim: DateTime.Now.AddDays(1),
+                local: "Local Teste",
+                endereco: "Endereço Teste",
+                observacoes: "Observações",
+                lotacaoMaxima: 100,
+                orcamentoMaximo: 1000,
+                tipoEventoId: 1
+            );
+
+            _tipoEventoRepoMock
+                .Setup(r => r.GetByIdAsync(evento.TipoEventoId))
+                .ReturnsAsync(new TipoEvento { Id = 1, Descricao = "Workshop" });
+
+            _eventoRepoMock
+                .Setup(r => r.AddAsync(evento))
+                .ThrowsAsync(new Exception("Erro inesperado no banco"));
+
+            // Act
+            var result = await _service.AddAsync(evento);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Ocorreu um erro ao criar o evento.", result.ErrorMessage);
+        }
 
         [Fact]
         public async Task DeleteAsync_DeveFalhar_QuandoEventoNaoEncontrado()
@@ -146,6 +178,25 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             // Assert
             Assert.True(result.IsSuccess);
             Assert.True(result.Data);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            int eventoId = 1;
+
+            _eventoRepoMock
+                .Setup(r => r.GetByIdAsync(eventoId))
+                .ThrowsAsync(new Exception("Erro inesperado no banco"));
+
+            // Act
+            var result = await _service.DeleteAsync(eventoId);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Ocorreu um erro ao excluir o evento.", result.ErrorMessage);
         }
 
         [Fact]
@@ -559,6 +610,26 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.Equal(7, alvo.Participantes.First().ParticipanteId);
             _eventoRepoMock.Verify(r => r.UpdateAsync(It.IsAny<Evento>()), Times.Once);
         }
+        
+        [Fact]
+        public async Task AddParticipanteByCpfAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            int eventoId = 1;
+            string cpf = "12345678901";
+
+            _eventoRepoMock
+                .Setup(r => r.GetByIdWithAggregatesAsync(eventoId))
+                .ThrowsAsync(new Exception("Erro inesperado no banco"));
+
+            // Act
+            var result = await _service.AddParticipanteByCpfAsync(eventoId, cpf);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao adicionar participante ao evento.", result.ErrorMessage);
+        }
 
         [Fact]
         public async Task AddFornecedorByCnpjAsync_DeveFalhar_QuandoEventoNaoExiste()
@@ -701,6 +772,26 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.Single(evento.Fornecedores);
             Assert.Equal(10, evento.Fornecedores.First().FornecedorId);
             _eventoRepoMock.Verify(r => r.UpdateAsync(It.IsAny<Evento>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task AddFornecedorByCnpjAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            int eventoId = 1;
+            string cnpj = "12345678000199";
+
+            _eventoRepoMock
+                .Setup(r => r.GetByIdWithAggregatesAsync(eventoId))
+                .ThrowsAsync(new Exception("Erro inesperado no banco"));
+
+            // Act
+            var result = await _service.AddFornecedorByCnpjAsync(eventoId, cnpj);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao adicionar fornecedor ao evento.", result.ErrorMessage);
         }
     }
 }

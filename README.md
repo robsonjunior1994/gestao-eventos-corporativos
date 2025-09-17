@@ -90,6 +90,10 @@ Na raiz da solução/projeto:
 dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
 ```
 
+```bash
+dotnet test --collect:"XPlat Code Coverage"
+```
+
 Isso vai gerar arquivos `coverage.cobertura.xml` dentro de `TestResults/**/`.
 
 Agora gere o relatório HTML:
