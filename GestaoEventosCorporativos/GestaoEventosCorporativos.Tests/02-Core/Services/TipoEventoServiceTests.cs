@@ -72,6 +72,25 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
+        public async Task AddAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var tipoEvento = new TipoEvento { Id = 1, Descricao = "Congresso" };
+
+            _repoMock
+                .Setup(r => r.GetByDescricaoAsync(tipoEvento.Descricao))
+                .ThrowsAsync(new Exception("Falha no banco"));
+
+            // Act
+            var result = await _service.AddAsync(tipoEvento);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao criar tipo de evento.", result.ErrorMessage);
+        }
+
+        [Fact]
         public async Task DeleteAsync_DeveRetornarErro_QuandoNaoEncontrado()
         {
             //Arrange
@@ -100,6 +119,25 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             //Assert
             Assert.True(result.IsSuccess);
             _repoMock.Verify(r => r.DeleteAsync(tipoEvento), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var tipoEvento = new TipoEvento { Id = 1, Descricao = "Congresso" };
+
+            _repoMock
+                .Setup(r => r.GetByIdAsync(tipoEvento.Id))
+                .ThrowsAsync(new Exception("Falha inesperada"));
+
+            // Act
+            var result = await _service.DeleteAsync(tipoEvento.Id);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao excluir tipo de evento.", result.ErrorMessage);
         }
 
         [Fact]
@@ -178,6 +216,23 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         }
 
         [Fact]
+        public async Task GetByIdAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            _repoMock
+                .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Falha inesperada no banco"));
+
+            // Act
+            var result = await _service.GetByIdAsync(1);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao buscar tipo de evento.", result.ErrorMessage);
+        }
+
+        [Fact]
         public async Task UpdateAsync_DeveRetornarErro_QuandoDescricaoVazia()
         {
             //Arrange
@@ -224,6 +279,25 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.True(result.IsSuccess);
             Assert.Equal(tipoEvento.Descricao, result.Data.Descricao);
             _repoMock.Verify(r => r.UpdateAsync(It.IsAny<TipoEvento>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_DeveRetornarDatabaseError_QuandoRepositorioLancarExcecao()
+        {
+            // Arrange
+            var tipoEvento = new TipoEvento { Id = 1, Descricao = "Workshop" };
+
+            _repoMock
+                .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Falha inesperada no banco"));
+
+            // Act
+            var result = await _service.UpdateAsync(tipoEvento);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao atualizar tipo de evento.", result.ErrorMessage);
         }
     }
 }
