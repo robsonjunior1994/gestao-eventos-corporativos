@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="GestaoEventosCorporativos.Wpf.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GestaoEventosCorporativos.Wpf.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <StackPanel Margin="20">
+        <TextBox x:Name="txtEmail" Margin="0,0,0,10" Height="30" />
+        <PasswordBox x:Name="txtPassword" Margin="0,0,0,20" Height="30"/>
+        <Button Content="Entrar" Click="Entrar_Click" Height="35" Margin="0,0,0,10"/>
+        <Button Content="Cadastrar-se" Click="Cadastrar_Click" Height="35"/>
+    </StackPanel>
+</UserControl>
