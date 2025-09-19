@@ -1,9 +1,8 @@
-﻿<UserControl x:Class="GestaoEventosCorporativos.Wpf.Views.FornecedorView"
+﻿<UserControl x:Class="GestaoEventosCorporativos.Wpf.Views.ParticipanteView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Height="Auto" Width="Auto">
     <Grid Margin="20">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!-- Cabeçalho -->
@@ -17,7 +16,7 @@
 
         <!-- Cabeçalho com título + botão voltar -->
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock Text="Gerenciar Fornecedores" 
+            <TextBlock Text="Gerenciar Participantes" 
                        FontSize="22" FontWeight="Bold"
                        VerticalAlignment="Center" DockPanel.Dock="Left"/>
             <Button Content="Voltar" Width="100" Height="30"
@@ -28,32 +27,36 @@
 
         <!-- Cadastro -->
         <StackPanel Grid.Row="1" Margin="0,0,0,20">
-            <TextBlock Text="Cadastrar Fornecedor" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+            <TextBlock Text="Cadastrar Participante" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
 
-            <Label Content="Nome do Serviço"/>
-            <TextBox x:Name="txtNomeServico" Height="30" Margin="0,0,0,10"/>
+            <Label Content="Nome Completo"/>
+            <TextBox x:Name="txtNomeCompleto" Height="30" Margin="0,0,0,10"/>
 
-            <Label Content="CNPJ"/>
-            <TextBox x:Name="txtCnpj" Height="30" Margin="0,0,0,10"/>
+            <Label Content="CPF"/>
+            <TextBox x:Name="txtCpf" Height="30" Margin="0,0,0,10"/>
 
-            <Label Content="Valor Base"/>
-            <TextBox x:Name="txtValorBase" Height="30" Margin="0,0,0,10"/>
+            <Label Content="Telefone"/>
+            <TextBox x:Name="txtTelefone" Height="30" Margin="0,0,0,10"/>
 
-            <Button x:Name="btnCadastrar" Content="Cadastrar/Atualizar" Height="35" Click="Cadastrar_Click"/>
+            <Label Content="Tipo"/>
+            <ComboBox x:Name="cmbTipo" Height="30" Margin="0,0,0,20">
+                <ComboBoxItem Content="VIP" Tag="0"/>
+                <ComboBoxItem Content="Interno" Tag="1"/>
+                <ComboBoxItem Content="Externo" Tag="2"/>
+            </ComboBox>
+
+            <Button Content="Cadastrar" Height="35" Click="Cadastrar_Click"/>
         </StackPanel>
 
-        <!-- Lista de fornecedores -->
-        <DataGrid x:Name="dgFornecedores" Grid.Row="2" AutoGenerateColumns="False" 
+        <!-- Lista -->
+        <DataGrid x:Name="dgParticipantes" Grid.Row="2" AutoGenerateColumns="False" 
                   IsReadOnly="True" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
-                <DataGridTextColumn Header="Serviço" Binding="{Binding NomeServico}" Width="*"/>
-                <DataGridTextColumn Header="CNPJ" Binding="{Binding Cnpj}" Width="200"/>
-                <DataGridTextColumn Header="Valor Base" Width="120">
-                    <DataGridTextColumn.Binding>
-                        <Binding Path="ValorBase" StringFormat="C"/>
-                    </DataGridTextColumn.Binding>
-                </DataGridTextColumn>
+                <DataGridTextColumn Header="Nome Completo" Binding="{Binding NomeCompleto}" Width="*"/>
+                <DataGridTextColumn Header="CPF" Binding="{Binding Cpf}" Width="150"/>
+                <DataGridTextColumn Header="Telefone" Binding="{Binding Telefone}" Width="150"/>
+                <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="150"/>
 
                 <!-- Coluna de ações -->
                 <DataGridTemplateColumn Header="Ações" Width="200">

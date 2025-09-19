@@ -65,6 +65,10 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
         }
 
+        private void Voltar_Click(object sender, RoutedEventArgs e)
+        {
+            _main.Navigate(new LoginView(_main));
+        }
 
     }
 }

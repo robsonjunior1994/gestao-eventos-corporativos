@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="GestaoEventosCorporativos.Wpf.Views.EventoAddFornecedoresView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="Auto" Width="Auto">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Cabeçalho -->
+            <RowDefinition Height="Auto"/>
+            <!-- Fornecedores do evento -->
+            <RowDefinition Height="*"/>
+            <!-- Lista de disponíveis -->
+            <RowDefinition Height="Auto"/>
+            <!-- Paginação -->
+        </Grid.RowDefinitions>
+
+        <!-- Cabeçalho -->
+        <Border Grid.Row="0" Padding="16" BorderBrush="#DDD" BorderThickness="1" CornerRadius="8" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock x:Name="lblTitulo" FontSize="20" FontWeight="Bold" Margin="0,0,0,6"/>
+                    <TextBlock x:Name="lblPeriodo" Margin="0,2,0,0"/>
+                    <TextBlock x:Name="lblTipo" Margin="0,2,0,0"/>
+                    <TextBlock x:Name="lblLocal" Margin="0,2,0,0"/>
+                    <TextBlock x:Name="lblOrcamento" Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <Button Grid.Column="1" Content="Voltar" Padding="10,4" Click="Voltar_Click"
+                        HorizontalAlignment="Right" VerticalAlignment="Top"/>
+            </Grid>
+        </Border>
+
+        <!-- Fornecedores já vinculados ao evento -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,20">
+            <TextBlock Text="Fornecedores do Evento" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+            <DataGrid x:Name="dgFornecedoresEvento" AutoGenerateColumns="False" IsReadOnly="True" Height="150">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Serviço" Binding="{Binding NomeServico}" Width="*"/>
+                    <DataGridTextColumn Header="CNPJ" Binding="{Binding Cnpj}" Width="200"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+
+        <!-- Lista paginada de fornecedores disponíveis -->
+        <DataGrid x:Name="dgFornecedores" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
+                <DataGridTextColumn Header="Serviço" Binding="{Binding NomeServico}" Width="*"/>
+                <DataGridTextColumn Header="CNPJ" Binding="{Binding Cnpj}" Width="200"/>
+                <DataGridTextColumn Header="Valor Base" Width="120">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="ValorBase" StringFormat="C"/>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+
+                <DataGridTemplateColumn Header="Ações" Width="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Adicionar"
+                                    Tag="{Binding Cnpj}"
+                                    Click="Adicionar_Click"
+                                    Background="DarkOrange" Foreground="White" Padding="8,2"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Paginação -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button Content="Anterior" Width="100" Margin="5" Click="Anterior_Click"/>
+            <TextBlock x:Name="txtPagina" VerticalAlignment="Center" Margin="10,0" FontWeight="Bold"/>
+            <Button Content="Próxima" Width="100" Margin="5" Click="Proxima_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -109,12 +109,12 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
 
                 Participantes = result.Data.Participantes?
                     .Where(pe => pe.Participante != null)
-                    .Select(pe => pe.Participante!.NomeCompleto + ", CPF:" + pe.Participante!.CPF)
+                    .Select(pe => "NOME: " + pe.Participante!.NomeCompleto + ", CPF:" + pe.Participante!.CPF+";")
                     .ToList() ?? new List<string>(),
 
                 Fornecedores = result.Data.Fornecedores?
                     .Where(ef => ef.Fornecedor != null)
-                    .Select(ef => ef.Fornecedor!.NomeServico + ", CNPJ:" + ef.Fornecedor!.CNPJ) // ou NomeFantasia se for seu campo
+                    .Select(ef => "SERVIÇO: " + ef.Fornecedor!.NomeServico + ", CNPJ:" + ef.Fornecedor!.CNPJ + ";") // ou NomeFantasia se for seu campo
                     .ToList() ?? new List<string>()
             };
 

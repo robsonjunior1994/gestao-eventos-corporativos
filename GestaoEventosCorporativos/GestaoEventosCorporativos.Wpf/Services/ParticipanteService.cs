@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace GestaoEventosCorporativos.Wpf.Services
 {
-    public class FornecedorService
+    public class ParticipanteService
     {
         private readonly HttpClient _httpClient;
 
-        public FornecedorService()
+        public ParticipanteService()
         {
             _httpClient = new HttpClient
             {
@@ -23,45 +23,45 @@ namespace GestaoEventosCorporativos.Wpf.Services
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", AppSession.Token);
         }
 
-        public async Task<ApiResponse<FornecedorResponse>> CadastrarFornecedorAsync(FornecedorRequest request)
+        public async Task<ApiResponse<ParticipanteResponse>> CadastrarParticipanteAsync(ParticipanteRequest request)
         {
             var json = JsonSerializer.Serialize(request);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync("fornecedores", content);
+            var response = await _httpClient.PostAsync("participantes", content);
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<ApiResponse<FornecedorResponse>>(responseContent,
+            return JsonSerializer.Deserialize<ApiResponse<ParticipanteResponse>>(responseContent,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<ApiResponse<PagedResult<FornecedorResponse>>> ListarFornecedoresAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<ApiResponse<PagedResult<ParticipanteResponse>>> ListarParticipantesAsync(int pageNumber = 1, int pageSize = 10)
         {
-            var response = await _httpClient.GetAsync($"fornecedores?pageNumber={pageNumber}&pageSize={pageSize}");
+            var response = await _httpClient.GetAsync($"participantes?pageNumber={pageNumber}&pageSize={pageSize}");
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<ApiResponse<PagedResult<FornecedorResponse>>>(responseContent,
+            return JsonSerializer.Deserialize<ApiResponse<PagedResult<ParticipanteResponse>>>(responseContent,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<ApiResponse<FornecedorResponse>> EditarFornecedorAsync(int id, FornecedorRequest request)
+        public async Task<ApiResponse<bool>> DeletarParticipanteAsync(int id)
         {
-            var json = JsonSerializer.Serialize(request);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PutAsync($"fornecedores/{id}", content);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            return JsonSerializer.Deserialize<ApiResponse<FornecedorResponse>>(responseContent,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        }
-
-        public async Task<ApiResponse<bool>> DeletarFornecedorAsync(int id)
-        {
-            var response = await _httpClient.DeleteAsync($"fornecedores/{id}");
+            var response = await _httpClient.DeleteAsync($"participantes/{id}");
             var responseContent = await response.Content.ReadAsStringAsync();
 
             return JsonSerializer.Deserialize<ApiResponse<bool>>(responseContent,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+
+        public async Task<ApiResponse<ParticipanteResponse>> EditarParticipanteAsync(int id, ParticipanteRequest request)
+        {
+            var json = JsonSerializer.Serialize(request);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"participantes/{id}", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<ApiResponse<ParticipanteResponse>>(responseContent,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 

@@ -9,6 +9,16 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- BOTÃO DE VOLTAR -->
+        <DockPanel Margin="0,0,0,20">
+            <TextBlock Text="Gerenciar Eventos" FontSize="22" FontWeight="Bold" 
+               VerticalAlignment="Center" DockPanel.Dock="Left"/>
+            <Button Content="Voltar" Width="100" Height="30" 
+            DockPanel.Dock="Right" 
+            HorizontalAlignment="Right"
+            Click="Voltar_Click"/>
+        </DockPanel>
+
         <!-- Cadastro -->
         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
             <TextBox x:Name="txtDescricao" Width="200" Margin="0,0,10,0"/>

@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using GestaoEventosCorporativos.Wpf.DTOs.Request;
+using GestaoEventosCorporativos.Wpf.Services;
+using System.DirectoryServices.ActiveDirectory;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using GestaoEventosCorporativos.Wpf.DTOs.Request;
-using GestaoEventosCorporativos.Wpf.Services;
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -12,13 +13,17 @@ namespace GestaoEventosCorporativos.Wpf.Views
         private int _paginaAtual = 1;
         private int _totalPaginas = 1;
         private const int _pageSize = 5;
+        private readonly MainWindow _main;
+        private int? _fornecedorEmEdicaoId = null;
 
-        public FornecedorView()
+        public FornecedorView(MainWindow main)
         {
             InitializeComponent();
             _fornecedorService = new FornecedorService();
 
             _ = CarregarLista(_paginaAtual, _pageSize);
+
+            _main = main;
         }
 
         private async void Cadastrar_Click(object sender, RoutedEventArgs e)
@@ -36,24 +41,41 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 ValorBase = valorBase
             };
 
-            var result = await _fornecedorService.CadastrarFornecedorAsync(request);
-
-            if (result != null && result.IsSuccess)
+            if (_fornecedorEmEdicaoId == null)
             {
-                MessageBox.Show($"{result.Message}\nID: {result.Data.Id}\nServiço: {result.Data.NomeServico}",
-                    "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                // 🔹 Cadastro
+                var result = await _fornecedorService.CadastrarFornecedorAsync(request);
 
-                txtNomeServico.Clear();
-                txtCnpj.Clear();
-                txtValorBase.Clear();
-
-                await CarregarLista(_paginaAtual, _pageSize);
+                if (result != null && result.IsSuccess)
+                {
+                    MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(result?.Message ?? "Erro ao cadastrar", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else
             {
-                string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao cadastrar"}";
-                MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                // 🔹 Atualização
+                var result = await _fornecedorService.EditarFornecedorAsync(_fornecedorEmEdicaoId.Value, request);
+
+                if (result != null && result.IsSuccess)
+                {
+                    MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(result?.Message ?? "Erro ao atualizar", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                _fornecedorEmEdicaoId = null;
+                btnCadastrar.Content = "Cadastrar"; // volta texto original
             }
+
+            // 🔹 Recarrega lista e limpa form
+            await CarregarLista(_paginaAtual, _pageSize);
+            LimparFormulario();
         }
 
         private async Task CarregarLista(int pageNumber, int pageSize)
@@ -74,52 +96,17 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
         }
 
-        private async void Editar_Click(object sender, RoutedEventArgs e)
+        private void Editar_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.Tag is DTOs.Reponse.FornecedorListResponse fornecedor)
+            if (sender is Button btn && btn.Tag is DTOs.Reponse.FornecedorResponse fornecedor)
             {
-                // Abre uma janela simples de input para editar os valores
-                var novoNomeServico = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Editar Nome do Serviço:",
-                    "Editar Fornecedor",
-                    fornecedor.NomeServico);
+                _fornecedorEmEdicaoId = fornecedor.Id;
 
-                var novoCnpj = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Editar CNPJ:",
-                    "Editar Fornecedor",
-                    fornecedor.Cnpj);
+                txtNomeServico.Text = fornecedor.NomeServico;
+                txtCnpj.Text = fornecedor.Cnpj;
+                txtValorBase.Text = fornecedor.ValorBase.ToString();
 
-                var novoValorStr = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Editar Valor Base:",
-                    "Editar Fornecedor",
-                    fornecedor.ValorBase.ToString());
-
-                if (decimal.TryParse(novoValorStr, out decimal novoValor))
-                {
-                    var request = new DTOs.Request.FornecedorRequest
-                    {
-                        NomeServico = novoNomeServico,
-                        Cnpj = novoCnpj,
-                        ValorBase = novoValor
-                    };
-
-                    var result = await _fornecedorService.EditarFornecedorAsync(fornecedor.Id, request);
-
-                    if (result != null && result.IsSuccess)
-                    {
-                        MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarLista(_paginaAtual, _pageSize);
-                    }
-                    else
-                    {
-                        string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao editar."}";
-                        MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Valor Base inválido.");
-                }
+                btnCadastrar.Content = "Atualizar"; // muda o texto do botão
             }
         }
 
@@ -164,5 +151,19 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 await CarregarLista(_paginaAtual + 1, _pageSize);
             }
         }
+
+        private void Voltar_Click(object sender, RoutedEventArgs e)
+        {
+            _main.Navigate(new HomeView(_main));
+        }
+
+        private void LimparFormulario()
+        {
+            txtNomeServico.Clear();
+            txtCnpj.Clear();
+            txtValorBase.Clear();
+        }
+
+
     }
 }

@@ -1,11 +1,11 @@
-﻿namespace GestaoEventosCorporativos.Wpf.DTOs.Reponse
-{
-    public class TipoEventoListResponse
-    {
-        public int Id { get; set; }
-        public string Descricao { get; set; }
-    }
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace GestaoEventosCorporativos.Wpf.DTOs.Reponse
+{
     public class PagedResult<T>
     {
         public List<T> Items { get; set; }

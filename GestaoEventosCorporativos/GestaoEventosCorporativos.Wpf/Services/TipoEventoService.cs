@@ -35,12 +35,12 @@ namespace GestaoEventosCorporativos.Wpf.Services
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<ApiResponse<PagedResult<TipoEventoListResponse>>> ListarTipoEventosAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<ApiResponse<PagedResult<TipoEventoResponse>>> ListarTipoEventosAsync(int pageNumber = 1, int pageSize = 10)
         {
             var response = await _httpClient.GetAsync($"tipoEventos?pageNumber={pageNumber}&pageSize={pageSize}");
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<ApiResponse<PagedResult<TipoEventoListResponse>>>(
+            return JsonSerializer.Deserialize<ApiResponse<PagedResult<TipoEventoResponse>>>(
                 responseContent,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
             );

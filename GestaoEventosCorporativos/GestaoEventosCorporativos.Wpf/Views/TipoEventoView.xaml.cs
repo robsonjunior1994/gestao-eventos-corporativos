@@ -12,13 +12,15 @@ namespace GestaoEventosCorporativos.Wpf.Views
         private int _paginaAtual = 1;
         private int _totalPaginas = 1;
         private const int _pageSize = 5; // tamanho da página
+        private readonly MainWindow _main;
 
-        public TipoEventoView()
+        public TipoEventoView(MainWindow main)
         {
             InitializeComponent();
             _tipoEventoService = new TipoEventoService();
 
             _ = CarregarLista(_paginaAtual, _pageSize);
+            _main = main;
         }
 
         private async void Cadastrar_Click(object sender, RoutedEventArgs e)
@@ -103,7 +105,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
         private async void Editar_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.Tag is DTOs.Reponse.TipoEventoListResponse tipoEvento)
+            if (sender is Button btn && btn.Tag is DTOs.Reponse.TipoEventoResponse tipoEvento)
             {
                 // Abre InputBox simples para editar a descrição
                 var novaDescricao = Microsoft.VisualBasic.Interaction.InputBox(
@@ -131,6 +133,10 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
         }
 
+        private void Voltar_Click(object sender, RoutedEventArgs e)
+        {
+            _main.Navigate(new HomeView(_main));
+        }
 
     }
 }
