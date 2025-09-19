@@ -1,12 +1,8 @@
 ﻿using GestaoEventosCorporativos.Wpf.DTOs.Reponse;
 using GestaoEventosCorporativos.Wpf.DTOs.Request;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace GestaoEventosCorporativos.Wpf.Services
 {
@@ -32,6 +28,20 @@ namespace GestaoEventosCorporativos.Wpf.Services
             var responseContent = await response.Content.ReadAsStringAsync();
 
             return JsonSerializer.Deserialize<ApiResponse<UserResponse>>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+
+        public async Task<ApiResponse<LoginResponse>> LoginAsync(LoginRequest request)
+        {
+            var json = JsonSerializer.Serialize(request);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync("users/login", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<ApiResponse<LoginResponse>>(responseContent, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });

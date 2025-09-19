@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using GestaoEventosCorporativos.Wpf.DTOs.Request;
+using GestaoEventosCorporativos.Wpf.Services;
+using System.Text.Json;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace GestaoEventosCorporativos.Wpf.Views
@@ -6,19 +9,62 @@ namespace GestaoEventosCorporativos.Wpf.Views
     public partial class RegisterView : UserControl
     {
         private readonly MainWindow _main;
+        private readonly UserService _userService;
 
         public RegisterView(MainWindow main)
         {
             InitializeComponent();
             _main = main;
+            _userService = new UserService();
         }
 
-        private void Cadastrar_Click(object sender, RoutedEventArgs e)
+        private async void Cadastrar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Usuário cadastrado com sucesso!");
+            var request = new UserRequest
+            {
+                Name = txtName.Text,
+                Email = txtEmail.Text,
+                Password = txtPassword.Password
+            };
 
-            // Depois do cadastro, volta para tela de login
-            _main.Navigate(new LoginView(_main));
+            try
+            {
+                var result = await _userService.RegisterUserAsync(request);
+
+                if (result != null && result.IsSuccess)
+                {
+                    // ✅ Sucesso
+                    MessageBox.Show(
+                        $"{result.Message}\n\nUsuário: {result.Data.Name}\nEmail: {result.Data.Email}",
+                        "Sucesso",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                    _main.Navigate(new LoginView(_main));
+                }
+                else
+                {
+                    string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao cadastrar usuário."}";
+
+                    if (result?.Errors != null)
+                    {
+                        // Converte erros para JSON indentado
+                        string jsonErrors = JsonSerializer.Serialize(
+                            result.Errors,
+                            new JsonSerializerOptions { WriteIndented = true });
+
+                        errorMessage += $"\n\nDetalhes:\n{jsonErrors}";
+                    }
+
+                    MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro inesperado: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
+
     }
 }

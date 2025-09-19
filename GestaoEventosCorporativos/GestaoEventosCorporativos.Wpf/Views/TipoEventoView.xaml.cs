@@ -1,0 +1,136 @@
+﻿using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using GestaoEventosCorporativos.Wpf.DTOs.Request;
+using GestaoEventosCorporativos.Wpf.Services;
+
+namespace GestaoEventosCorporativos.Wpf.Views
+{
+    public partial class TipoEventoView : UserControl
+    {
+        private readonly TipoEventoService _tipoEventoService;
+        private int _paginaAtual = 1;
+        private int _totalPaginas = 1;
+        private const int _pageSize = 5; // tamanho da página
+
+        public TipoEventoView()
+        {
+            InitializeComponent();
+            _tipoEventoService = new TipoEventoService();
+
+            _ = CarregarLista(_paginaAtual, _pageSize);
+        }
+
+        private async void Cadastrar_Click(object sender, RoutedEventArgs e)
+        {
+            var request = new TipoEventoRequest { Descricao = txtDescricao.Text };
+
+            var result = await _tipoEventoService.CadastrarTipoEventoAsync(request);
+
+            if (result != null && result.IsSuccess)
+            {
+                MessageBox.Show("Tipo de evento cadastrado com sucesso!");
+                txtDescricao.Text = string.Empty;
+
+                await CarregarLista(_paginaAtual, _pageSize);
+            }
+            else
+            {
+                string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao cadastrar."}";
+                MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async Task CarregarLista(int pageNumber, int pageSize)
+        {
+            var result = await _tipoEventoService.ListarTipoEventosAsync(pageNumber, pageSize);
+
+            if (result != null && result.IsSuccess)
+            {
+                dgTipoEventos.ItemsSource = result.Data.Items;
+                _paginaAtual = result.Data.PageNumber;
+                _totalPaginas = result.Data.TotalPages;
+
+                txtPagina.Text = $"Página {_paginaAtual} de {_totalPaginas}";
+            }
+            else
+            {
+                string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao carregar lista."}";
+                MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void Anterior_Click(object sender, RoutedEventArgs e)
+        {
+            if (_paginaAtual > 1)
+            {
+                await CarregarLista(_paginaAtual - 1, _pageSize);
+            }
+        }
+
+        private async void Proxima_Click(object sender, RoutedEventArgs e)
+        {
+            if (_paginaAtual < _totalPaginas)
+            {
+                await CarregarLista(_paginaAtual + 1, _pageSize);
+            }
+        }
+
+        private async void Excluir_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is int id)
+            {
+                var confirm = MessageBox.Show($"Deseja realmente excluir o TipoEvento ID {id}?",
+                    "Confirmação", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                if (confirm == MessageBoxResult.Yes)
+                {
+                    var result = await _tipoEventoService.DeletarTipoEventoAsync(id);
+
+                    if (result != null && result.IsSuccess)
+                    {
+                        MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await CarregarLista(_paginaAtual, _pageSize); // recarregar lista
+                    }
+                    else
+                    {
+                        string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao excluir."}";
+                        MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
+        private async void Editar_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is DTOs.Reponse.TipoEventoListResponse tipoEvento)
+            {
+                // Abre InputBox simples para editar a descrição
+                var novaDescricao = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Editar descrição do Tipo de Evento:",
+                    "Editar TipoEvento",
+                    tipoEvento.Descricao);
+
+                if (!string.IsNullOrWhiteSpace(novaDescricao) && novaDescricao != tipoEvento.Descricao)
+                {
+                    var request = new DTOs.Request.TipoEventoRequest { Descricao = novaDescricao };
+
+                    var result = await _tipoEventoService.EditarTipoEventoAsync(tipoEvento.Id, request);
+
+                    if (result != null && result.IsSuccess)
+                    {
+                        MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await CarregarLista(_paginaAtual, _pageSize);
+                    }
+                    else
+                    {
+                        string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao editar."}";
+                        MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
+
+    }
+}
