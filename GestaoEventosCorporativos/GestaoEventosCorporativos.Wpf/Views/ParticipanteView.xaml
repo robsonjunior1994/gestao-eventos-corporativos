@@ -45,7 +45,7 @@
                 <ComboBoxItem Content="Externo" Tag="2"/>
             </ComboBox>
 
-            <Button Content="Cadastrar" Height="35" Click="Cadastrar_Click"/>
+            <Button x:Name="btnCadastrar" Content="Cadastrar" Height="35" Click="Cadastrar_Click"/>
         </StackPanel>
 
         <!-- Lista -->

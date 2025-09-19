@@ -13,6 +13,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
         private int _pageSize = 10;
         private int _totalPages = 1;
         private readonly MainWindow _main;
+        private int? _participanteEmEdicaoId = null;
 
         public ParticipanteView(MainWindow main)
         {
@@ -52,24 +53,45 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     Tipo = tipo
                 };
 
-                var result = await _participanteService.CadastrarParticipanteAsync(request);
-
-                if (result != null && result.IsSuccess)
+                if (_participanteEmEdicaoId == null)
                 {
-                    MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // 🔹 Cadastro
+                    var result = await _participanteService.CadastrarParticipanteAsync(request);
 
-                    txtNomeCompleto.Clear();
-                    txtCpf.Clear();
-                    txtTelefone.Clear();
-                    cmbTipo.SelectedIndex = -1;
-
-                    await CarregarLista(_paginaAtual, _pageSize);
+                    if (result != null && result.IsSuccess)
+                    {
+                        MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao cadastrar"}";
+                        MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
                 }
                 else
                 {
-                    string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao cadastrar"}";
-                    MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // 🔹 Atualização
+                    var result = await _participanteService.EditarParticipanteAsync(_participanteEmEdicaoId.Value, request);
+
+                    if (result != null && result.IsSuccess)
+                    {
+                        MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao atualizar"}";
+                        MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    _participanteEmEdicaoId = null;
+                    btnCadastrar.Content = "Cadastrar"; // volta texto original
                 }
+
+                // 🔹 Sempre recarrega lista e limpa form
+                await CarregarLista(_paginaAtual, _pageSize);
+                LimparFormulario();
             }
             else
             {
@@ -102,53 +124,38 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
         }
 
-        private async void Editar_Click(object sender, RoutedEventArgs e)
+        private void Editar_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is ParticipanteResponse participante)
             {
-                // Caixa simples para editar os campos
-                var novoNome = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Editar Nome Completo:", "Editar Participante", participante.NomeCompleto);
+                _participanteEmEdicaoId = participante.Id;
+                txtNomeCompleto.Text = participante.NomeCompleto;
+                txtCpf.Text = participante.Cpf;
+                txtTelefone.Text = participante.Telefone;
 
-                var novoCpf = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Editar CPF:", "Editar Participante", participante.Cpf);
-
-                var novoTelefone = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Editar Telefone:", "Editar Participante", participante.Telefone);
-
-                // Seleção do tipo: 0 = VIP, 1 = Normal, 2 = Interno, 3 = Externo
-                var tipoStr = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Editar Tipo (0=VIP, 1=Interno, 2=Externo):",
-                    "Editar Participante", "1");
-
-                if (!int.TryParse(tipoStr, out int novoTipo))
+                // 🔹 Converte string Tipo -> int
+                int tipo = participante.Tipo switch
                 {
-                    MessageBox.Show("Tipo inválido. Use 0=VIP, 1=Interno, 2=Externo.");
-                    return;
-                }
-
-                var request = new ParticipanteRequest
-                {
-                    NomeCompleto = string.IsNullOrWhiteSpace(novoNome) ? participante.NomeCompleto : novoNome,
-                    Cpf = string.IsNullOrWhiteSpace(novoCpf) ? participante.Cpf : novoCpf,
-                    Telefone = string.IsNullOrWhiteSpace(novoTelefone) ? participante.Telefone : novoTelefone,
-                    Tipo = novoTipo
+                    "VIP" => 0,
+                    "Interno" => 1,
+                    "Externo" => 2,
+                    _ => 0
                 };
 
-                var result = await _participanteService.EditarParticipanteAsync(participante.Id, request);
+                // Seleciona tipo no ComboBox
+                foreach (ComboBoxItem item in cmbTipo.Items)
+                {
+                    if (item.Tag != null && int.TryParse(item.Tag.ToString(), out int itemTipo) && itemTipo == tipo)
+                    {
+                        cmbTipo.SelectedItem = item;
+                        break;
+                    }
+                }
 
-                if (result != null && result.IsSuccess)
-                {
-                    MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await CarregarLista(_paginaAtual, _pageSize); // Recarrega a lista
-                }
-                else
-                {
-                    string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao editar"}";
-                    MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                btnCadastrar.Content = "Atualizar"; // muda texto do botão
             }
         }
+
 
 
         private async void Anterior_Click(object sender, RoutedEventArgs e)
@@ -167,6 +174,15 @@ namespace GestaoEventosCorporativos.Wpf.Views
         {
             _main.Navigate(new HomeView(_main));
         }
+
+        private void LimparFormulario()
+        {
+            txtNomeCompleto.Clear();
+            txtCpf.Clear();
+            txtTelefone.Clear();
+            cmbTipo.SelectedIndex = -1;
+        }
+
 
     }
 }
