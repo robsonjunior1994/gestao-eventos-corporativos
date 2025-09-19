@@ -13,6 +13,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
         private int _totalPaginas = 1;
         private const int _pageSize = 5; // tamanho da página
         private readonly MainWindow _main;
+        private int? _tipoEventoEmEdicaoId = null;
 
         public TipoEventoView(MainWindow main)
         {
@@ -27,21 +28,43 @@ namespace GestaoEventosCorporativos.Wpf.Views
         {
             var request = new TipoEventoRequest { Descricao = txtDescricao.Text };
 
-            var result = await _tipoEventoService.CadastrarTipoEventoAsync(request);
-
-            if (result != null && result.IsSuccess)
+            if (_tipoEventoEmEdicaoId == null)
             {
-                MessageBox.Show("Tipo de evento cadastrado com sucesso!");
-                txtDescricao.Text = string.Empty;
+                // 🔹 Cadastro
+                var result = await _tipoEventoService.CadastrarTipoEventoAsync(request);
 
-                await CarregarLista(_paginaAtual, _pageSize);
+                if (result != null && result.IsSuccess)
+                {
+                    MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(result?.Message ?? "Erro ao cadastrar", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else
             {
-                string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao cadastrar."}";
-                MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                // 🔹 Atualização
+                var result = await _tipoEventoService.EditarTipoEventoAsync(_tipoEventoEmEdicaoId.Value, request);
+
+                if (result != null && result.IsSuccess)
+                {
+                    MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(result?.Message ?? "Erro ao atualizar", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                _tipoEventoEmEdicaoId = null;
+                btnCadastrar.Content = "Cadastrar"; // volta texto do botão
             }
+
+            // 🔹 Recarrega lista e limpa form
+            await CarregarLista(_paginaAtual, _pageSize);
+            LimparFormulario();
         }
+
 
         private async Task CarregarLista(int pageNumber, int pageSize)
         {
@@ -103,40 +126,27 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
         }
 
-        private async void Editar_Click(object sender, RoutedEventArgs e)
+        private void Editar_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is DTOs.Reponse.TipoEventoResponse tipoEvento)
             {
-                // Abre InputBox simples para editar a descrição
-                var novaDescricao = Microsoft.VisualBasic.Interaction.InputBox(
-                    "Editar descrição do Tipo de Evento:",
-                    "Editar TipoEvento",
-                    tipoEvento.Descricao);
-
-                if (!string.IsNullOrWhiteSpace(novaDescricao) && novaDescricao != tipoEvento.Descricao)
-                {
-                    var request = new DTOs.Request.TipoEventoRequest { Descricao = novaDescricao };
-
-                    var result = await _tipoEventoService.EditarTipoEventoAsync(tipoEvento.Id, request);
-
-                    if (result != null && result.IsSuccess)
-                    {
-                        MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarLista(_paginaAtual, _pageSize);
-                    }
-                    else
-                    {
-                        string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao editar."}";
-                        MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
+                _tipoEventoEmEdicaoId = tipoEvento.Id;
+                txtDescricao.Text = tipoEvento.Descricao;
+                btnCadastrar.Content = "Atualizar"; // muda texto do botão
             }
         }
+
 
         private void Voltar_Click(object sender, RoutedEventArgs e)
         {
             _main.Navigate(new HomeView(_main));
         }
+
+        private void LimparFormulario()
+        {
+            txtDescricao.Clear();
+        }
+
 
     }
 }
