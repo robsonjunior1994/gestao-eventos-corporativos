@@ -1,6 +1,6 @@
 ﻿<UserControl x:Class="GestaoEventosCorporativos.Wpf.Views.HomeView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Height="Auto" Width="Auto">
     <Grid Margin="20">
         <StackPanel>
@@ -11,6 +11,69 @@
             <Button Content="Gerenciar Fornecedores" Click="BtnFornecedor_Click" Height="35" Margin="0,0,0,10"/>
             <Button Content="Gerenciar Participantes" Click="BtnParticipante_Click" Height="35" Margin="0,0,0,10"/>
             <Button Content="Gerenciar Eventos" Click="BtnEvento_Click" Height="35" Margin="0,0,0,10"/>
+
+            <!-- Relatórios -->
+
+
+            <TextBlock Text="Relatório: Agenda de Participante" 
+           FontSize="18" FontWeight="Bold" Margin="0,20,0,10"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Label Content="Digite o CPF"/>
+                <TextBox x:Name="txtCpfAgenda" Width="200" Height="30" Margin="0,0,10,0" />
+                <Button Content="Buscar Agenda" Width="150" Height="30" Click="BtnBuscarAgenda_Click"/>
+            </StackPanel>
+
+            <DataGrid x:Name="dgAgendaParticipante" AutoGenerateColumns="False" 
+          IsReadOnly="True" Height="200">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Evento ID" Binding="{Binding EventoId}" Width="80"/>
+                    <DataGridTextColumn Header="Nome Evento" Binding="{Binding NomeEvento}" Width="200"/>
+                    <DataGridTextColumn Header="Início" Binding="{Binding DataInicio, StringFormat=dd/MM/yyyy}" Width="120"/>
+                    <DataGridTextColumn Header="Fim" Binding="{Binding DataFim, StringFormat=dd/MM/yyyy}" Width="120"/>
+                    <DataGridTextColumn Header="Local" Binding="{Binding Local}" Width="200"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+
+            <TextBlock Text="Relatório: Saldo e Orçamento dos Eventos" 
+                       FontSize="18" FontWeight="Bold" Margin="0,20,0,10"/>
+
+            <DataGrid x:Name="dgRelatorioSaldo" AutoGenerateColumns="False" 
+                      IsReadOnly="True" Height="250">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding EventoId}" Width="80"/>
+                    <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="200"/>
+                    <DataGridTextColumn Header="Orçamento Máximo" Binding="{Binding OrcamentoMaximo, StringFormat=C}" Width="150"/>
+                    <DataGridTextColumn Header="Total Fornecedores" Binding="{Binding ValorTotalFornecedores, StringFormat=C}" Width="150"/>
+                    <DataGridTextColumn Header="Saldo Orçamento" Binding="{Binding SaldoOrcamento, StringFormat=C}" Width="150"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock Text="Relatório: Tipos de Participantes Mais Frequentes" 
+           FontSize="18" FontWeight="Bold" Margin="0,20,0,10"/>
+
+            <DataGrid x:Name="dgRelatorioTiposParticipantes" AutoGenerateColumns="False" 
+          IsReadOnly="True" Height="200">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="200"/>
+                    <DataGridTextColumn Header="Quantidade" Binding="{Binding Quantidade}" Width="120"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock Text="Relatório: Fornecedores Mais Utilizados" 
+           FontSize="18" FontWeight="Bold" Margin="0,20,0,10"/>
+
+            <DataGrid x:Name="dgRelatorioFornecedores" AutoGenerateColumns="False" 
+          IsReadOnly="True" Height="200">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Serviço" Binding="{Binding NomeServico}" Width="200"/>
+                    <DataGridTextColumn Header="CNPJ" Binding="{Binding Cnpj}" Width="200"/>
+                    <DataGridTextColumn Header="Qtd Eventos" Binding="{Binding QuantidadeEventos}" Width="120"/>
+                    <DataGridTextColumn Header="Valor Total" Binding="{Binding ValorTotalContratado, StringFormat=C}" Width="150"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
 
         </StackPanel>
     </Grid>
