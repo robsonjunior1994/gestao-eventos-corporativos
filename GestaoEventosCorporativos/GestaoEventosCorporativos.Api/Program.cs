@@ -35,6 +35,7 @@ builder.Services.AddScoped<ITipoEventoService, TipoEventoService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IEncryptionPasswordService, EncryptionPasswordService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRelatorioService, RelatorioService>();
 
 // Configuração do JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
