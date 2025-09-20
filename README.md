@@ -5,6 +5,8 @@ Vídeo de apresentação — 🎥 [LINK](https://youtu.be/u8gembunzCA)
 Este projeto faz parte de um **desafio técnico** proposto por uma empresa.  
 O objetivo é implementar um sistema de **gestão de eventos corporativos** utilizando boas práticas de arquitetura e desenvolvimento em **.NET**.
 
+[Link PDF privado](https://drive.google.com/file/d/1ns2xZR_hUF6yZ1IBx8EEy1VTNS9wrdT8/view?usp=drive_link)
+
 🎤 **Relatório resumido – Gestão de Eventos Corporativos**
 
 > O projeto é um sistema de **gestão de eventos corporativos**, construído em **.NET 8** com uma arquitetura em **3 camadas**: **Apresentação (controllers e DTOs)**, **Core (serviços e regras de negócio)** e **Infraestrutura (repositories e banco de dados)**.
