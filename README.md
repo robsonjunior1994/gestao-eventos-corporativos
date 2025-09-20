@@ -95,6 +95,91 @@ Por fim, eu apliquei conceitos de **Clean Code e SOLID**, padronizei as resposta
 
 </details>
 
+<details>
+
+## 🗣️ Minha explicação sobre os relacionamentos do sistema
+
+No meu sistema de **Gestão de Eventos Corporativos**, eu modelei as entidades e configurei os relacionamentos no Entity Framework para garantir que tudo ficasse bem organizado, normalizado e refletisse as regras de negócio.
+
+### 🔹 1. Evento e TipoEvento (1\:N)
+
+Cada evento precisa ter um **tipo definido**. Então, por exemplo, posso ter o tipo “Workshop” e vários eventos associados a ele.
+Esse é um relacionamento **um-para-muitos**:
+
+* Um **TipoEvento** pode estar em vários eventos.
+* Mas cada **Evento** só pode ter um tipo.
+
+---
+
+### 🔹 2. Evento e Participante (N\:N com ParticipanteEvento)
+
+Os eventos precisam controlar os **participantes**.
+Um participante pode estar em vários eventos, e um evento pode ter vários participantes. Para modelar isso, eu criei a tabela de junção **ParticipanteEvento**.
+Além de ligar as duas entidades, ela ainda guarda informações extras, como a **Data de Inscrição**.
+
+---
+
+### 🔹 3. Evento e Fornecedor (N\:N com EventoFornecedor)
+
+Os eventos também podem ter vários **fornecedores contratados** (buffet, segurança, etc.).
+E esses fornecedores podem ser usados em diferentes eventos.
+Esse relacionamento é **muitos-para-muitos**, representado pela entidade **EventoFornecedor**, que além das chaves de ligação, armazena o **Valor Contratado**. Isso é um exemplo de relacionamento N\:N **com payload** (porque tem informação extra na relação).
+
+---
+
+### 🔹 4. Evento e regras de negócio
+
+Centralizei algumas **constantes** na classe `EventoRegras`, como a **lotação mínima** e o **orçamento mínimo**, para garantir que essas validações não fiquem soltas no código.
+
+---
+
+### 🔹 5. Participante e Fornecedor
+
+Participantes e fornecedores não se relacionam diretamente entre si, mas ambos têm sua relação indireta com os eventos.
+
+---
+
+### 🔹 6. User
+
+Também tenho uma entidade `User`, que serve para o **controle de autenticação e acesso ao sistema**. Ela não está diretamente ligada às demais, mas é importante para a parte de segurança.
+
+---
+
+### 🔹 Configurações do Entity Framework
+
+Com o **Fluent API**, defini:
+
+* **Nomes das tabelas** (`Eventos`, `Participantes`, etc.).
+* **Chaves primárias e compostas** (como em `ParticipanteEvento` e `EventoFornecedor`).
+* **Tipos de dados SQL** (`decimal(18,2)` para valores monetários).
+* **Regras de tamanho** (ex.: `Nome` com até 200 caracteres).
+* **Relacionamentos claros** com `HasOne`, `HasMany`, `WithOne` e `WithMany`.
+
+Isso garante que o banco fique bem estruturado e sem inconsistências.
+
+---
+
+### 🔹 Visão do Banco de Dados
+
+No final, minha modelagem gerou:
+
+* **Tabelas principais**: `Eventos`, `Participantes`, `Fornecedores`, `TiposEventos`, `Users`.
+* **Tabelas de junção**: `ParticipantesEventos` e `EventosFornecedores`.
+
+Ou seja, a estrutura está toda em **Terceira Forma Normal (3FN)**, evitando redundância e mantendo integridade.
+
+---
+
+### 🔹 Como eu uso na prática
+
+Quando quero consultar um evento completo, por exemplo, consigo carregar **participantes e fornecedores juntos** usando `Include` e `ThenInclude`. Isso facilita na hora de gerar relatórios e controlar orçamentos.
+
+</details>
+
+---
+---
+---
+
 ## 🚀 Tecnologias Utilizadas
 - **.NET 8**
 - **ASP.NET Core Web API**
@@ -164,6 +249,9 @@ _dotnet tool install --global dotnet-ef_
 
 ## ▶️ Rodando a Aplicação (API + WPF via Visual Studio)
 
+<details>
+<summary><strong>Passo a passo</strong></summary>
+  
 Após configurar o banco e aplicar as migrações iniciais, você pode rodar a aplicação completa (API + WPF) direto no Visual Studio:
 
 1. Abra a **Solution** no Visual Studio.
@@ -179,7 +267,7 @@ Após configurar o banco e aplicar as migrações iniciais, você pode rodar a a
 
 🔹 Assim, o Visual Studio vai iniciar **simultaneamente a API (Web API)** e o **cliente desktop WPF**, permitindo testar toda a solução integrada.
 
-
+</details>
 
 ## ✅ Rodando Testes com Cobertura de Código
 
@@ -259,6 +347,7 @@ start coveragereport\index.html
 
 
 ## 📌 Estrutura do Projeto
+
 
 * **01-Presentation (Controllers, DTOs, Responses)**
 * **02-Core (Entidades, Serviços, Regras de Negócio)**
