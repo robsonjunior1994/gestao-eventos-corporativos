@@ -349,6 +349,27 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return Ok(response);
         }
 
+        [HttpDelete("{eventoId}/fornecedores/{cnpj}")]
+        public async Task<IActionResult> RemoveFornecedor(int eventoId, string cnpj)
+        {
+            var response = new ResponseDTO();
+
+            var result = await _eventoService.RemoveFornecedorByCnpjAsync(eventoId, cnpj);
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.Failure(result.ErrorMessage, statusCode.ToString());
+                return StatusCode(statusCode, response);
+            }
+
+            response.Success("Fornecedor removido do evento com sucesso.",
+                StatusCodes.Status200OK.ToString(), true);
+
+            return Ok(response);
+        }
+
+
 
     }
 }

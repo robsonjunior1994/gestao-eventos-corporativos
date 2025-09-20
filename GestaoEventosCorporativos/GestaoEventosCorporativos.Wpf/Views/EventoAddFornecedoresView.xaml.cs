@@ -143,5 +143,33 @@ namespace GestaoEventosCorporativos.Wpf.Views
         {
             _main.Navigate(new EventoView(_main));
         }
+
+        private async void Remover_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string cnpj && !string.IsNullOrWhiteSpace(cnpj))
+            {
+                var confirm = MessageBox.Show($"Remover o fornecedor (CNPJ: {cnpj}) do evento \"{_evento.Nome}\"?",
+                    "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                if (confirm == MessageBoxResult.Yes)
+                {
+                    var resp = await _eventoService.RemoverFornecedorAsync(_evento.Id, cnpj);
+
+                    if (resp != null && resp.IsSuccess && resp.Data)
+                    {
+                        MessageBox.Show(resp.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        // 🔄 Atualiza lista e saldo/orçamento
+                        await CarregarFornecedoresDoEvento(_evento.Id);
+                    }
+                    else
+                    {
+                        MessageBox.Show(resp?.Message ?? "Erro ao remover fornecedor.",
+                            "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -275,5 +275,37 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             }
         }
 
+        public async Task<Result<bool>> RemoveFornecedorByCnpjAsync(int eventoId, string cnpj)
+        {
+            try
+            {
+                var evento = await _eventoRepository.GetByIdWithAggregatesAsync(eventoId);
+                if (evento == null)
+                    return Result<bool>.Failure("Evento não encontrado.", ErrorCode.NOT_FOUND);
+
+                if (string.IsNullOrWhiteSpace(cnpj))
+                    return Result<bool>.Failure("O CNPJ é obrigatório.", ErrorCode.VALIDATION_ERROR);
+
+                var fornecedor = await _fornecedorRepository.GetByCnpjAsync(cnpj);
+                if (fornecedor == null)
+                    return Result<bool>.Failure("Fornecedor não encontrado.", ErrorCode.NOT_FOUND);
+
+                var eventoFornecedor = evento.Fornecedores
+                    .FirstOrDefault(f => f.FornecedorId == fornecedor.Id);
+
+                if (eventoFornecedor == null)
+                    return Result<bool>.Failure("Fornecedor não está vinculado a este evento.", ErrorCode.NOT_FOUND);
+
+                evento.Fornecedores.Remove(eventoFornecedor);
+
+                await _eventoRepository.UpdateAsync(evento);
+
+                return Result<bool>.Success(true);
+            }
+            catch (Exception)
+            {
+                return Result<bool>.Failure("Erro ao remover fornecedor do evento.", ErrorCode.DATABASE_ERROR);
+            }
+        }
     }
 }

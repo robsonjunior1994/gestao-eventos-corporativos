@@ -107,5 +107,15 @@ namespace GestaoEventosCorporativos.Wpf.Services
             return JsonSerializer.Deserialize<ApiResponse<bool>>(content,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
+
+        public async Task<ApiResponse<bool>> RemoverFornecedorAsync(int eventoId, string cnpj)
+        {
+            var response = await _httpClient.DeleteAsync($"eventos/{eventoId}/fornecedores/{cnpj}");
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<ApiResponse<bool>>(content,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+
     }
 }

@@ -42,8 +42,21 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Serviço" Binding="{Binding NomeServico}" Width="*"/>
                     <DataGridTextColumn Header="CNPJ" Binding="{Binding Cnpj}" Width="200"/>
+
+                    <!-- Coluna de Ações -->
+                    <DataGridTemplateColumn Header="Ações" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Remover"
+                            Tag="{Binding Cnpj}"
+                            Click="Remover_Click"
+                            Background="Red" Foreground="White" Padding="8,2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
+
         </StackPanel>
 
         <!-- Lista paginada de fornecedores disponíveis -->
