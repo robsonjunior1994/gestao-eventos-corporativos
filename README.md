@@ -4,6 +4,12 @@ Esse projeto é parte de um desafio de habilidade que estou realizando de uma em
 
 # Passos para utilizar a aplicação
 
+**Pré-requisitos:**
+0 - Carga de trabalho de "ASP.NET e desenvolvimento Web"
+1 - Carga de trabalho de "Desenvolvimetno para desktop com .NET (WPF)
+2 - SKD .NET 8
+3 - Docker Desktop
+
 <details>
 <summary> Configurando banco de dados SQL Server com Docker </summary>
 1. Baixar imagem do sql server:
