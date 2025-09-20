@@ -17,6 +17,8 @@ O objetivo é implementar um sistema de **gestão de eventos corporativos** util
 >
 > Como solicitado, implementei os **relatórios úteis**: agenda de participantes, fornecedores mais utilizados, tipos de participantes mais frequentes e saldo de orçamento dos eventos.
 >
+> Frontend criado em WPF (Windows Presentation Foundation), tecnologia da Microsoft voltada para o desenvolvimento de aplicações desktop modernas no Windows.
+>
 > Em resumo: é um sistema completo, modular e seguro, pronto para ser expandido para cenários reais de gestão de eventos.
 
 
