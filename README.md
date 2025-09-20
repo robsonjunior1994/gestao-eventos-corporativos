@@ -1,4 +1,4 @@
-Vídeo de apresentação — 🎥 https://youtu.be/lT943sWnmAQ
+Vídeo de apresentação — 🎥 [LINK](https://youtu.be/u8gembunzCA)
 
 # Gestão de Eventos Corporativos
 
