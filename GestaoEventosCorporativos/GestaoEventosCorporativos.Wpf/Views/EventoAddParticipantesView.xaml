@@ -41,12 +41,24 @@
             <TextBlock Text="Participantes do Evento" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
             <DataGrid x:Name="dgParticipantesEvento" AutoGenerateColumns="False" IsReadOnly="True" Height="150">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
                     <DataGridTextColumn Header="Nome Completo" Binding="{Binding NomeCompleto}" Width="*"/>
                     <DataGridTextColumn Header="CPF" Binding="{Binding Cpf}" Width="150"/>
                     <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="120"/>
+
+                    <!-- Nova coluna de ações -->
+                    <DataGridTemplateColumn Header="Ações" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Remover"
+                            Tag="{Binding Cpf}"
+                            Click="Remover_Click"
+                            Background="Red" Foreground="White" Padding="8,2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
+
         </StackPanel>
 
         <!-- Lista paginada de participantes disponíveis -->

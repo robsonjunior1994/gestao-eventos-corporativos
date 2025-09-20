@@ -170,6 +170,37 @@ namespace GestaoEventosCorporativos.Wpf.Views
             _main.Navigate(new EventoView(_main));
         }
 
+        private async void Remover_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string cpf && !string.IsNullOrWhiteSpace(cpf))
+            {
+                var confirm = MessageBox.Show(
+                    $"Remover o participante (CPF: {cpf}) do evento \"{_evento.Nome}\"?",
+                    "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                if (confirm == MessageBoxResult.Yes)
+                {
+                    var resp = await _eventoService.RemoverParticipanteAsync(_evento.Id, cpf);
+
+                    if (resp != null && resp.IsSuccess && resp.Data)
+                    {
+                        MessageBox.Show(resp.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        // Atualiza as listas
+                        await CarregarParticipantesDoEvento(_evento.Id);
+                        await CarregarParticipantesDisponiveis(_paginaAtual, _pageSize);
+                    }
+                    else
+                    {
+                        MessageBox.Show(resp?.Message ?? "Erro ao remover participante.",
+                            "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                }
+            }
+        }
+
+
 
     }
 }

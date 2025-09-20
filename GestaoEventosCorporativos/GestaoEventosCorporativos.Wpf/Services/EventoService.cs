@@ -99,5 +99,13 @@ namespace GestaoEventosCorporativos.Wpf.Services
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
+        public async Task<ApiResponse<bool>> RemoverParticipanteAsync(int eventoId, string cpf)
+        {
+            var response = await _httpClient.DeleteAsync($"eventos/{eventoId}/participantes/{cpf}");
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<ApiResponse<bool>>(content,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
     }
 }
