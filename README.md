@@ -24,7 +24,6 @@ O objetivo é implementar um sistema de **gestão de eventos corporativos** util
 
 <details>
 
-  <summry> Clique aqui </summary>
 
 Bom, eu vou explicar como organizei esse projeto de Gestão de Eventos Corporativos.
 
