@@ -793,5 +793,277 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
             Assert.Equal("Erro ao adicionar fornecedor ao evento.", result.ErrorMessage);
         }
+
+        [Fact]
+        public async Task RemoveParticipanteByCpfAsync_DeveRetornarErro_QuandoCpfForVazio()
+        {
+            // Act
+            var result = await _service.RemoveParticipanteByCpfAsync(1, "   ");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
+            Assert.Equal("O CPF é obrigatório.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveParticipanteByCpfAsync_DeveRetornarErro_QuandoEventoNaoEncontrado()
+        {
+            // Arrange
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(It.IsAny<int>()))
+                .ReturnsAsync((Evento)null);
+
+            // Act
+            var result = await _service.RemoveParticipanteByCpfAsync(1, "12345678901");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("Evento não encontrado.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveParticipanteByCpfAsync_DeveRetornarErro_QuandoParticipanteNaoEncontrado()
+        {
+            // Arrange
+            var evento = new Evento("Evento Teste", DateTime.Today, DateTime.Today.AddDays(1), "Local", "Endereço", "Obs", 100, 1000, 1);
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(It.IsAny<int>()))
+                .ReturnsAsync(evento);
+
+            _participanteRepoMock.Setup(r => r.GetByCpfWithEventosAsync(It.IsAny<string>()))
+                .ReturnsAsync((Participante)null);
+
+            // Act
+            var result = await _service.RemoveParticipanteByCpfAsync(1, "12345678901");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("Participante não encontrado.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveParticipanteByCpfAsync_DeveRetornarErro_QuandoParticipanteNaoVinculado()
+        {
+            // Arrange
+            var participante = new Participante { Id = 1, CPF = "12345678901", NomeCompleto = "João Teste" };
+            var evento = new Evento("Evento Teste", DateTime.Today, DateTime.Today.AddDays(1), "Local", "Endereço", "Obs", 100, 1000, 1);
+
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(It.IsAny<int>()))
+                .ReturnsAsync(evento);
+            _participanteRepoMock.Setup(r => r.GetByCpfWithEventosAsync("12345678901"))
+                .ReturnsAsync(participante);
+
+            // Act
+            var result = await _service.RemoveParticipanteByCpfAsync(1, "12345678901");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("Participante não está vinculado a este evento.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveParticipanteByCpfAsync_DeveRemoverComSucesso()
+        {
+            // Arrange
+            var participante = new Participante { Id = 1, CPF = "12345678901", NomeCompleto = "João Teste" };
+            var evento = new Evento("Evento Teste", DateTime.Today, DateTime.Today.AddDays(1), "Local", "Endereço", "Obs", 100, 1000, 1);
+
+            var participanteEvento = new ParticipanteEvento { EventoId = evento.Id, ParticipanteId = participante.Id, Participante = participante };
+            evento.Participantes.Add(participanteEvento);
+
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(It.IsAny<int>()))
+                .ReturnsAsync(evento);
+            _participanteRepoMock.Setup(r => r.GetByCpfWithEventosAsync("12345678901"))
+                .ReturnsAsync(participante);
+
+            // Act
+            var result = await _service.RemoveParticipanteByCpfAsync(1, "12345678901");
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.True(result.Data);
+            _eventoRepoMock.Verify(r => r.UpdateAsync(evento), Times.Once);
+        }
+
+        [Fact]
+        public async Task RemoveParticipanteByCpfAsync_DeveRetornarErro_QuandoOcorreExcecao()
+        {
+            // Arrange
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Erro inesperado"));
+
+            // Act
+            var result = await _service.RemoveParticipanteByCpfAsync(1, "12345678901");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao remover participante do evento.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveFornecedorByCnpjAsync_DeveRetornarErro_QuandoEventoNaoEncontrado()
+        {
+            // Arrange
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1))
+                .ReturnsAsync((Evento)null);
+
+            // Act
+            var result = await _service.RemoveFornecedorByCnpjAsync(1, "12345678000100");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("Evento não encontrado.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveFornecedorByCnpjAsync_DeveRetornarErro_QuandoCnpjForVazio()
+        {
+            // Arrange
+            var evento = new Evento(
+                "Evento Teste",
+                DateTime.Now,
+                DateTime.Now.AddDays(1),
+                "Local",
+                "Endereco",
+                "Obs",
+                100,
+                1000,
+                1
+            );
+
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1))
+                .ReturnsAsync(evento);
+
+            // Act
+            var result = await _service.RemoveFornecedorByCnpjAsync(1, "   ");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.VALIDATION_ERROR, result.ErrorCode);
+            Assert.Equal("O CNPJ é obrigatório.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveFornecedorByCnpjAsync_DeveRetornarErro_QuandoFornecedorNaoEncontrado()
+        {
+            // Arrange
+            var evento = new Evento(
+                "Evento Teste",
+                DateTime.Now,
+                DateTime.Now.AddDays(1),
+                "Local",
+                "Endereco",
+                "Obs",
+                100,
+                1000,
+                1
+            );
+
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1))
+                .ReturnsAsync(evento);
+            _fornecedorRepoMock.Setup(r => r.GetByCnpjAsync("12345678000100"))
+                .ReturnsAsync((Fornecedor)null);
+
+            // Act
+            var result = await _service.RemoveFornecedorByCnpjAsync(1, "12345678000100");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("Fornecedor não encontrado.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveFornecedorByCnpjAsync_DeveRetornarErro_QuandoFornecedorNaoEstaNoEvento()
+        {
+            // Arrange
+            var evento = new Evento(
+                "Evento Teste",
+                DateTime.Now,
+                DateTime.Now.AddDays(1),
+                "Local",
+                "Endereco",
+                "Obs",
+                100,
+                1000,
+                1
+            );
+
+            var fornecedor = new Fornecedor { Id = 10, CNPJ = "12345678000100" };
+
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1))
+                .ReturnsAsync(evento);
+            _fornecedorRepoMock.Setup(r => r.GetByCnpjAsync("12345678000100"))
+                .ReturnsAsync(fornecedor);
+
+            // Act
+            var result = await _service.RemoveFornecedorByCnpjAsync(1, "12345678000100");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.NOT_FOUND, result.ErrorCode);
+            Assert.Equal("Fornecedor não está vinculado a este evento.", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveFornecedorByCnpjAsync_DeveRetornarSucesso_QuandoFornecedorRemovido()
+        {
+            // Arrange
+            var fornecedor = new Fornecedor { Id = 10, CNPJ = "12345678000100", ValorBase = 500 };
+
+            var evento = new Evento(
+                "Evento Teste",
+                DateTime.Now,
+                DateTime.Now.AddDays(1),
+                "Local",
+                "Endereco",
+                "Obs",
+                100,
+                1000,
+                1
+            );
+
+            evento.Fornecedores.Add(new EventoFornecedor
+            {
+                EventoId = evento.Id,
+                FornecedorId = fornecedor.Id,
+                ValorContratado = fornecedor.ValorBase,
+                Fornecedor = fornecedor
+            });
+
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1))
+                .ReturnsAsync(evento);
+            _fornecedorRepoMock.Setup(r => r.GetByCnpjAsync("12345678000100"))
+                .ReturnsAsync(fornecedor);
+
+            // Act
+            var result = await _service.RemoveFornecedorByCnpjAsync(1, "12345678000100");
+
+            // Assert
+            Assert.True(result.IsSuccess);
+            Assert.True(result.Data);
+            Assert.Empty(evento.Fornecedores); // foi removido
+            _eventoRepoMock.Verify(r => r.UpdateAsync(evento), Times.Once);
+        }
+        [Fact]
+        public async Task RemoveFornecedorByCnpjAsync_DeveRetornarErro_QuandoOcorreExcecao()
+        {
+            // Arrange
+            _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Falha inesperada"));
+
+            // Act
+            var result = await _service.RemoveFornecedorByCnpjAsync(1, "12345678000100");
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Equal("Erro ao remover fornecedor do evento.", result.ErrorMessage);
+        }
+
     }
 }

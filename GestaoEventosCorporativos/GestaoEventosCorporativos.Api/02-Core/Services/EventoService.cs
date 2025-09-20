@@ -249,6 +249,9 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(cpf))
+                    return Result<bool>.Failure("O CPF é obrigatório.", ErrorCode.VALIDATION_ERROR);
+
                 var evento = await _eventoRepository.GetByIdWithAggregatesAsync(eventoId);
                 if (evento == null)
                     return Result<bool>.Failure("Evento não encontrado.", ErrorCode.NOT_FOUND);
