@@ -1,9 +1,11 @@
-Vídeo de apresentação — 🎥 https://youtu.be/lT943sWnmAQ
+Vídeo de apresentação — 🎥 [LINK](https://youtu.be/u8gembunzCA)
 
 # Gestão de Eventos Corporativos
 
 Este projeto faz parte de um **desafio técnico** proposto por uma empresa.  
 O objetivo é implementar um sistema de **gestão de eventos corporativos** utilizando boas práticas de arquitetura e desenvolvimento em **.NET**.
+
+[Link PDF privado](https://drive.google.com/file/d/1ns2xZR_hUF6yZ1IBx8EEy1VTNS9wrdT8/view?usp=drive_link)
 
 🎤 **Relatório resumido – Gestão de Eventos Corporativos**
 
@@ -21,6 +23,8 @@ O objetivo é implementar um sistema de **gestão de eventos corporativos** util
 >
 > Frontend criado em WPF (Windows Presentation Foundation), tecnologia da Microsoft voltada para o desenvolvimento de aplicações desktop modernas no Windows.
 >
+> Documentação técnica da API gerada automaticamente pelo Swagger
+> 
 > Em resumo: é um sistema completo, modular e seguro, pronto para ser expandido para cenários reais de gestão de eventos.
 
 
@@ -270,6 +274,8 @@ Após configurar o banco e aplicar as migrações iniciais, você pode rodar a a
 7. Pressione **F5** ou clique em **Start** para rodar.
 
 🔹 Assim, o Visual Studio vai iniciar **simultaneamente a API (Web API)** e o **cliente desktop WPF**, permitindo testar toda a solução integrada.
+
+Obs.: [LINK](https://web.postman.co/workspace/My-Workspace~c2368300-0f6e-4a80-8979-850b7b16f939/collection/7362818-090dde86-d7b4-4fd6-8751-7b6ba12e4182?action=share&source=copy-link&creator=7362818) para testar a API via POSTMAN
 
 </details>
 
