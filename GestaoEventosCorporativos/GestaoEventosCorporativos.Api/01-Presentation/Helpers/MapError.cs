@@ -28,12 +28,12 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Helpers
         public const string RESOURCE_ALREADY_EXISTS = "RESOURCE_ALREADY_EXISTS";
         public const string DATABASE_ERROR = "DATABASE_ERROR";
 
-        // 🔑 Autenticação/autorização
+        // Autenticação/autorização
         public const string UNAUTHORIZED = "UNAUTHORIZED";
         public const string FORBIDDEN = "FORBIDDEN";
         public const string INVALID_CREDENTIALS = "INVALID_CREDENTIALS";
 
-        // ⚙️ Erro genérico de infraestrutura/interno
+        // Erro genérico de infraestrutura/interno
         public const string INTERNAL_ERROR = "INTERNAL_ERROR";
     }
 }
