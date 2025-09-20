@@ -13,7 +13,7 @@ O objetivo é implementar um sistema de **gestão de eventos corporativos** util
 >
 > A API segue boas práticas de **RESTful**, com uso adequado de verbos HTTP, respostas padronizadas e separação clara entre entidades, DTOs de entrada e saída.
 >
-> As **regras de negócio** ficam isoladas em **services**, enquanto os **repositories** cuidam apenas da comunicação com o banco de dados.
+> As **regras de negócio** ficam isoladas em **CORE**, enquanto os **repositories** cuidam apenas da comunicação com o banco de dados.
 >
 > O projeto também traz **autenticação JWT** e criptografia de senhas com **PBKDF2**, garantindo segurança desde o cadastro até o login.
 >
