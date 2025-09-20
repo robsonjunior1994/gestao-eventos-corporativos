@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="02-Core\Exceptions\" />
-    <Folder Include="03-Infrastructure\Migrations\" />
   </ItemGroup>
 
 </Project>

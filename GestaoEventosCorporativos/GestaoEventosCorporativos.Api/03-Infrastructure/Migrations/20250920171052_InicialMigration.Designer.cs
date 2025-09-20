@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestaoEventosCorporativos.Api._03Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250916150254_InicialMigration")]
+    [Migration("20250920171052_InicialMigration")]
     partial class InicialMigration
     {
         /// <inheritdoc />
@@ -179,6 +179,28 @@ namespace GestaoEventosCorporativos.Api._03Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TiposEventos", (string)null);
+                });
+
+            modelBuilder.Entity("GestaoEventosCorporativos.Api._02_Core.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("GestaoEventosCorporativos.Api._02_Core.Entities.Evento", b =>

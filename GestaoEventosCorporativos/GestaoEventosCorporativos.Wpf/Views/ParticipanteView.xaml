@@ -32,9 +32,8 @@
             <Label Content="Nome Completo"/>
             <TextBox x:Name="txtNomeCompleto" Height="30" Margin="0,0,0,10"/>
 
-            <Label Content="CPF"/>
-            <Label Content="Com 11 digitos"/>
-            <Label Content="ex: 12345678970"/>
+            <Label Content="CPF Com 11 digitos"/>
+            <Label Content="Ex: 12345678970"/>
             <TextBox x:Name="txtCpf" Height="30" Margin="0,0,0,10"/>
 
             <Label Content="Telefone"/>
