@@ -271,6 +271,12 @@ Após configurar o banco e aplicar as migrações iniciais, você pode rodar a a
 
 ## ✅ Rodando Testes com Cobertura de Código
 
+
+👉 40% de todo o código do sistema está coberto por testes unitários. Já na camada Core, onde se concentra a lógica de negócio, alcançamos **87%** de cobertura, garantindo robustez e confiabilidade justamente na parte mais crítica da aplicação.
+
+<img width="1720" height="1314" alt="image" src="https://github.com/user-attachments/assets/771c77da-2697-4bb0-9085-affbe9040e80" />
+
+
 <details>
 <summary><strong>Configuração e execução</strong></summary>
 
