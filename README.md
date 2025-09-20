@@ -23,6 +23,8 @@ O objetivo é implementar um sistema de **gestão de eventos corporativos** util
 >
 > Frontend criado em WPF (Windows Presentation Foundation), tecnologia da Microsoft voltada para o desenvolvimento de aplicações desktop modernas no Windows.
 >
+> Documentação técnica da API gerada automaticamente pelo Swagger
+> 
 > Em resumo: é um sistema completo, modular e seguro, pronto para ser expandido para cenários reais de gestão de eventos.
 
 
