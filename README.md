@@ -275,6 +275,8 @@ Após configurar o banco e aplicar as migrações iniciais, você pode rodar a a
 
 🔹 Assim, o Visual Studio vai iniciar **simultaneamente a API (Web API)** e o **cliente desktop WPF**, permitindo testar toda a solução integrada.
 
+Obs.: [LINK](https://web.postman.co/workspace/My-Workspace~c2368300-0f6e-4a80-8979-850b7b16f939/collection/7362818-090dde86-d7b4-4fd6-8751-7b6ba12e4182?action=share&source=copy-link&creator=7362818) para testar a API via POSTMAN
+
 </details>
 
 ## ✅ Rodando Testes com Cobertura de Código
