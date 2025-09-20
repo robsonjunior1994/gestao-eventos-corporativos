@@ -1,3 +1,5 @@
+Vídeo de apresentação — 🎥 https://youtu.be/lT943sWnmAQ
+
 # Gestão de Eventos Corporativos
 
 Este projeto faz parte de um **desafio técnico** proposto por uma empresa.  
