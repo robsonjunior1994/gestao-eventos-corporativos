@@ -18,8 +18,8 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
 
             //EXCLUIR DEPOIS
-            txtEmail.Text = "robson1@example.com";
-            txtPassword.Password = "123456789";
+            //txtEmail.Text = "robson1@example.com";
+            //txtPassword.Password = "123456789";
         }
 
         private void Cadastrar_Click(object sender, RoutedEventArgs e)
