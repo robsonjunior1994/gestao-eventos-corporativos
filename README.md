@@ -188,6 +188,15 @@ Quando quero consultar um evento completo, por exemplo, consigo carregar **parti
 ---
 ---
 
+## 📌 Estrutura do Projeto
+
+
+* **01-Presentation (Controllers, DTOs, Responses)**
+* **02-Core (Entidades, Serviços, Regras de Negócio)**
+* **03-Infrastructure (Repositories, Migrations, Banco de Dados)**
+* **Tests (xUnit, Moq, cobertura com Coverlet)**
+  
+
 ## 🚀 Tecnologias Utilizadas
 - **.NET 8**
 - **ASP.NET Core Web API**
@@ -360,30 +369,100 @@ start coveragereport\index.html
 
 </details>
 
+# 📊 Relatório de Funcionalidades — Sistema de Gestão de Eventos Corporativos (WPF + API)
 
+## 🖥️ Frontend (WPF)
 
-## 📌 Estrutura do Projeto
-
-
-* **01-Presentation (Controllers, DTOs, Responses)**
-* **02-Core (Entidades, Serviços, Regras de Negócio)**
-* **03-Infrastructure (Repositories, Migrations, Banco de Dados)**
-* **Tests (xUnit, Moq, cobertura com Coverlet)**
-
-
-
-## 🔒 Segurança
-
-* Autenticação com **JWT**
-* Criptografia de senha usando **PBKDF2 (hash + salt)**
-
-
-
-## 📊 Relatórios Disponíveis
-
-* Agenda dos participantes (por CPF)
-* Fornecedores mais utilizados (quantidade e valores)
-* Tipos de participantes mais frequentes
-* Saldo de orçamento dos eventos
+Interface desenvolvida em **WPF (.NET)**, conectada à API via **HttpClient**, com autenticação **JWT** e suporte a **paginação** em todas as listagens.
 
 ---
+
+## 🔐 Autenticação
+
+* Login com **usuário e senha**, recebendo **JWT** para acesso autenticado.
+* Sessão mantida via `AppSession.Token`.
+
+---
+
+## 📂 Módulos do Sistema
+
+### 🎭 **Tipos de Evento**
+
+* Cadastrar tipo de evento.
+* Editar descrição do tipo de evento.
+* Excluir tipo de evento.
+* Listagem com **paginação**.
+
+---
+
+### 🏢 **Fornecedores**
+
+* Cadastrar fornecedor (Nome do serviço, CNPJ, Valor Base).
+* Editar fornecedor direto no formulário.
+* Excluir fornecedor.
+* Listagem com **paginação**.
+* Associar fornecedor a eventos.
+* Remover fornecedor de eventos.**_(FUNÇÃO EXTRA)_**
+* Atualização automática do **saldo/orçamento** do evento.
+
+---
+
+### 👥 **Participantes**
+
+* Cadastrar participante (Nome Completo, CPF, Telefone, Tipo: VIP, Interno, Externo).
+* Editar participante direto no formulário.
+* Excluir participante.
+* Listagem com **paginação**.
+* Associar participante a eventos.
+* Remover participante de eventos.**_(FUNÇÃO EXTRA)_**
+* Atualização automática da **lotação** do evento.
+
+---
+
+### 📅 **Eventos**
+
+* Cadastrar evento (Nome, Período, Local, Endereço, Tipo, Orçamento, Lotação Máxima).
+* Editar evento direto no formulário.
+* Excluir evento.
+* Listagem com **paginação**.
+* Gerenciar participantes de um evento:
+
+  * Adicionar participantes disponíveis.
+  * Remover participantes vinculados.**_(FUNÇÃO EXTRA)_**
+  * Exibir lista de participantes vinculados.
+* Gerenciar fornecedores de um evento:
+
+  * Adicionar fornecedores disponíveis.
+  * Remover fornecedores vinculados. **_(FUNÇÃO EXTRA)_**
+  * Exibir lista de fornecedores vinculados.
+* Atualização automática de **lotação** e **saldo/orçamento**.
+
+---
+
+## 📊 Relatórios
+
+Disponíveis diretamente no **Dashboard (HomeView)**:
+
+* **Saldo e Orçamento dos Eventos**
+  Lista cada evento com orçamento máximo, valor gasto em fornecedores e saldo disponível.
+
+* **Tipos de Participantes Mais Frequentes**
+  Exibe quantidade de participantes por tipo (VIP, Interno, Externo).
+
+* **Fornecedores Mais Utilizados**
+  Lista os fornecedores com número de eventos atendidos e valor total contratado.
+
+* **Agenda de Participante por CPF**
+  Permite consultar, a partir do CPF, em quais eventos o participante está cadastrado (com datas e locais).
+
+---
+
+## 🛠️ Outras Funcionalidades Técnicas
+
+* **Paginação implementada** em todas as listagens (Eventos, Participantes, Fornecedores, Tipos de Evento).
+* **WPF Navigation**: transição entre telas com botão *Voltar*.
+* **Validações básicas** (números, CNPJ, CPF, valores).
+* **Feedback visual** ao usuário via `MessageBox`.
+
+---
+
