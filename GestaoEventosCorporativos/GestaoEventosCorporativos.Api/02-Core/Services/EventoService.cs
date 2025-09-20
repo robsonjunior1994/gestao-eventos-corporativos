@@ -244,5 +244,36 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
                 return Result<Fornecedor>.Failure("Erro ao adicionar fornecedor ao evento.", ErrorCode.DATABASE_ERROR);
             }
         }
+
+        public async Task<Result<bool>> RemoveParticipanteByCpfAsync(int eventoId, string cpf)
+        {
+            try
+            {
+                var evento = await _eventoRepository.GetByIdWithAggregatesAsync(eventoId);
+                if (evento == null)
+                    return Result<bool>.Failure("Evento não encontrado.", ErrorCode.NOT_FOUND);
+
+                var participante = await _participanteRepository.GetByCpfWithEventosAsync(cpf);
+                if (participante == null)
+                    return Result<bool>.Failure("Participante não encontrado.", ErrorCode.NOT_FOUND);
+
+                var participanteEvento = evento.Participantes
+                    .FirstOrDefault(p => p.ParticipanteId == participante.Id);
+
+                if (participanteEvento == null)
+                    return Result<bool>.Failure("Participante não está vinculado a este evento.", ErrorCode.NOT_FOUND);
+
+                evento.Participantes.Remove(participanteEvento);
+
+                await _eventoRepository.UpdateAsync(evento);
+
+                return Result<bool>.Success(true);
+            }
+            catch (Exception)
+            {
+                return Result<bool>.Failure("Erro ao remover participante do evento.", ErrorCode.DATABASE_ERROR);
+            }
+        }
+
     }
 }

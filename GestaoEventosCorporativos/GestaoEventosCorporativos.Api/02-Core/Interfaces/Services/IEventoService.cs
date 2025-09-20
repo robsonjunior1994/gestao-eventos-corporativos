@@ -13,6 +13,7 @@ namespace GestaoEventosCorporativos.Api._02_Core.Interfaces.Services
         Task<Result<bool>> DeleteAsync(int id);
         Task<Result<Participante>> AddParticipanteByCpfAsync(int eventoId, string cpf);
         Task<Result<Fornecedor>> AddFornecedorByCnpjAsync(int eventoId, string cnpj);
+        Task<Result<bool>> RemoveParticipanteByCpfAsync(int eventoId, string cpf);
 
     }
 }

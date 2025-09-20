@@ -329,5 +329,26 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return StatusCode(StatusCodes.Status201Created, response);
         }
 
+        [HttpDelete("{eventoId}/participantes/{cpf}")]
+        public async Task<IActionResult> RemoveParticipante(int eventoId, string cpf)
+        {
+            var response = new ResponseDTO();
+
+            var result = await _eventoService.RemoveParticipanteByCpfAsync(eventoId, cpf);
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.Failure(result.ErrorMessage, statusCode.ToString());
+                return StatusCode(statusCode, response);
+            }
+
+            response.Success("Participante removido do evento com sucesso.",
+                StatusCodes.Status200OK.ToString(), true);
+
+            return Ok(response);
+        }
+
+
     }
 }
