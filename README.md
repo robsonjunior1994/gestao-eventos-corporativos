@@ -9,6 +9,8 @@ O objetivo é implementar um sistema de **gestão de eventos corporativos** util
 
 🎤 **Relatório resumido – Gestão de Eventos Corporativos**
 
+<details>
+
 > O projeto é um sistema de **gestão de eventos corporativos**, construído em **.NET 8** com uma arquitetura em **3 camadas**: **Apresentação (controllers e DTOs)**, **Core (serviços e regras de negócio)** e **Infraestrutura (repositories e banco de dados)**.
 >
 > A API segue boas práticas de **RESTful**, com uso adequado de verbos HTTP, respostas padronizadas e separação clara entre entidades, DTOs de entrada e saída.
@@ -27,6 +29,7 @@ O objetivo é implementar um sistema de **gestão de eventos corporativos** util
 > 
 > Em resumo: é um sistema completo, modular e seguro, pronto para ser expandido para cenários reais de gestão de eventos.
 
+</details>
 
 🎤 **Relatório COMPLETO – Gestão de Eventos Corporativos**
 
@@ -185,31 +188,13 @@ Quando quero consultar um evento completo, por exemplo, consigo carregar **parti
 </details>
 
 ---
----
----
 
-## 📌 Estrutura do Projeto
+## 🤔 Como rodar o projeto
 
+<details>
+  <summary> Detalhes </summary>
 
-* **01-Presentation (Controllers, DTOs, Responses)**
-* **02-Core (Entidades, Serviços, Regras de Negócio)**
-* **03-Infrastructure (Repositories, Migrations, Banco de Dados)**
-* **Tests (xUnit, Moq, cobertura com Coverlet)**
-  
-
-## 🚀 Tecnologias Utilizadas
-- **.NET 8**
-- **ASP.NET Core Web API**
-- **WPF (desktop client)**
-- **Entity Framework Core**
-- **SQL Server (via Docker)**
-- **xUnit + Moq (testes unitários)**
-- **JWT (autenticação)**
-- **Coverlet + ReportGenerator (cobertura de testes)**
-
-
-
-## 🛠️ Pré-requisitos
+  ## 🛠️ Pré-requisitos
 
 Certifique-se de ter instalado:
 
@@ -286,14 +271,48 @@ Após configurar o banco e aplicar as migrações iniciais, você pode rodar a a
 Obs.: [LINK](https://web.postman.co/workspace/My-Workspace~c2368300-0f6e-4a80-8979-850b7b16f939/collection/7362818-090dde86-d7b4-4fd6-8751-7b6ba12e4182?action=share&source=copy-link&creator=7362818) para testar a API via POSTMAN
 
 </details>
+  
+</details>
+
+## 📌 Estrutura do Projeto
+
+<details>
+
+
+* **01-Presentation (Controllers, DTOs, Responses)**
+* **02-Core (Entidades, Serviços, Regras de Negócio)**
+* **03-Infrastructure (Repositories, Migrations, Banco de Dados)**
+* **Tests (xUnit, Moq, cobertura com Coverlet)**
+  
+</details>
+
+## 🚀 Tecnologias Utilizadas
+
+<details>
+
+- **.NET 8**
+- **ASP.NET Core Web API**
+- **WPF (desktop client)**
+- **Entity Framework Core**
+- **SQL Server (via Docker)**
+- **xUnit + Moq (testes unitários)**
+- **JWT (autenticação)**
+- **Coverlet + ReportGenerator (cobertura de testes)**
+
+
+</details>
 
 ## ✅ Rodando Testes com Cobertura de Código
+
+<details>
 
 
 👉 40% de todo o código do sistema está coberto por testes unitários. Já na camada Core, onde se concentra a lógica de negócio, alcançamos **87%** de cobertura, garantindo robustez e confiabilidade justamente na parte mais crítica da aplicação.
 
 <img width="1720" height="1314" alt="image" src="https://github.com/user-attachments/assets/771c77da-2697-4bb0-9085-affbe9040e80" />
 
+
+</details>
 
 <details>
 <summary><strong>Configuração e execução</strong></summary>
@@ -368,7 +387,10 @@ start coveragereport\index.html
 
 </details>
 
+
 # 📊 Relatório de Funcionalidades — Sistema de Gestão de Eventos Corporativos (WPF + API)
+
+<details>
 
 ## 🖥️ Frontend (WPF)
 
@@ -465,3 +487,4 @@ Disponíveis diretamente no **Dashboard (HomeView)**:
 
 ---
 
+</details>
