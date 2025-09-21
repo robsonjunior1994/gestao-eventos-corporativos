@@ -244,8 +244,7 @@ Certifique-se de ter instalado:
 
 **Navegue até a pasta da API (ajuste o caminho se necessário):**
 
-_cd GestaoEventosCorporativos.Api_
-
+...
 
 **Crie a primeira migração:**
 
