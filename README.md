@@ -254,7 +254,7 @@ _dotnet tool install --global dotnet-ef_
 
 _dotnet ef migrations add InicialMigration --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api --output-dir ../GestaoEventosCorporativos.Api/03-Infrastructure/Migrations_
 
-**Atualize o banco:**
+**Aplicar migrations:**
 
 _dotnet ef database update --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api_
 
