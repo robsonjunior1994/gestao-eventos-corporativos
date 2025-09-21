@@ -213,7 +213,7 @@ Quando quero consultar um evento completo, por exemplo, consigo carregar **parti
 
 Certifique-se de ter instalado:
 
-1. Carga de trabalho **ASP.NET e desenvolvimento Web** (Visual Studio)  
+1. Carga de trabalho **ASP.NET e desenvolvimento Web** (Visual Studio Installer)  
 2. Carga de trabalho **Desenvolvimento para desktop com .NET (WPF)**  
 3. **SDK .NET 8**  
 4. **Docker Desktop**  
