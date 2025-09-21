@@ -213,8 +213,8 @@ Quando quero consultar um evento completo, por exemplo, consigo carregar **parti
 
 Certifique-se de ter instalado:
 
-1. Carga de trabalho **ASP.NET e desenvolvimento Web** (Visual Studio)  
-2. Carga de trabalho **Desenvolvimento para desktop com .NET (WPF)**  
+1. Carga de trabalho **ASP.NET e desenvolvimento Web** (Visual Studio Installer)  
+2. Carga de trabalho **Desenvolvimento para desktop com .NET** (Visual Studio Installer)    
 3. **SDK .NET 8**  
 4. **Docker Desktop**  
 
@@ -244,21 +244,20 @@ Certifique-se de ter instalado:
 
 **Navegue até a pasta da API (ajuste o caminho se necessário):**
 
-_cd GestaoEventosCorporativos.Api_
+...
 
+> ⚠️ Instale a ferramenta se necessário:
+
+_dotnet tool install --global dotnet-ef_
 
 **Crie a primeira migração:**
 
 _dotnet ef migrations add InicialMigration --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api --output-dir ../GestaoEventosCorporativos.Api/03-Infrastructure/Migrations_
 
-**Atualize o banco:**
+**Aplicar migrations:**
 
 _dotnet ef database update --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api_
 
-> ⚠️ Caso dê erro, instale a ferramenta:
-
-
-_dotnet tool install --global dotnet-ef_
 
 </details>
 
