@@ -246,6 +246,10 @@ Certifique-se de ter instalado:
 
 ...
 
+> ⚠️ Instale a ferramenta se necessário:
+
+_dotnet tool install --global dotnet-ef_
+
 **Crie a primeira migração:**
 
 _dotnet ef migrations add InicialMigration --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api --output-dir ../GestaoEventosCorporativos.Api/03-Infrastructure/Migrations_
@@ -254,10 +258,6 @@ _dotnet ef migrations add InicialMigration --project ../GestaoEventosCorporativo
 
 _dotnet ef database update --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api_
 
-> ⚠️ Caso dê erro, instale a ferramenta:
-
-
-_dotnet tool install --global dotnet-ef_
 
 </details>
 
