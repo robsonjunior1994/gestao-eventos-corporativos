@@ -9,14 +9,14 @@
             <DockPanel Margin="0,0,0,20">
                 <TextBlock Text="Gerenciar Eventos" FontSize="22" FontWeight="Bold" 
                VerticalAlignment="Center" DockPanel.Dock="Left"/>
-                <Button Content="Voltar" Width="100" Height="30" 
+                <Button Content="Voltar" Background="Red" Width="100" Height="30" 
             DockPanel.Dock="Right" 
             HorizontalAlignment="Right"
             Click="Voltar_Click"/>
             </DockPanel>
 
             <!-- CADASTRO -->
-            <TextBlock Text="Cadastrar/Atualizar Evento" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+            <TextBlock x:Name="btnNome" Text="Cadastrar" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
 
             <Label Content="Nome"/>
             <TextBox x:Name="txtNome" Height="30" Margin="0,0,0,10"/>
@@ -54,7 +54,7 @@
                       DisplayMemberPath="Descricao"
                       SelectedValuePath="Id"/>
 
-            <Button Content="Cadastrar/Atualizar Evento" Height="35" Margin="0,0,0,20" Click="Cadastrar_Click"/>
+            <Button x:Name="btnSalvar" Content="Salvar" Background="Green" Height="35" Margin="0,0,0,20" Click="Cadastrar_Click"/>
 
             <!-- LISTAGEM -->
             <DataGrid x:Name="dgEventos" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="300">

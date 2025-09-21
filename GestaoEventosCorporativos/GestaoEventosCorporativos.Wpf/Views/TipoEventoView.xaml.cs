@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using GestaoEventosCorporativos.Wpf.DTOs.Request;
+using GestaoEventosCorporativos.Wpf.Services;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using GestaoEventosCorporativos.Wpf.DTOs.Request;
-using GestaoEventosCorporativos.Wpf.Services;
+using System.Windows.Media;
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -129,7 +130,8 @@ namespace GestaoEventosCorporativos.Wpf.Views
             {
                 _tipoEventoEmEdicaoId = tipoEvento.Id;
                 txtDescricao.Text = tipoEvento.Descricao;
-                btnCadastrar.Content = "Atualizar"; 
+                btnCadastrar.Content = "Atualizar";
+                btnCadastrar.Background = new SolidColorBrush(Colors.Aqua);
             }
         }
 
@@ -142,6 +144,8 @@ namespace GestaoEventosCorporativos.Wpf.Views
         private void LimparFormulario()
         {
             txtDescricao.Clear();
+            btnCadastrar.Content = "Cadastrar";
+            btnCadastrar.Background = new SolidColorBrush(Colors.Green);
         }
 
 

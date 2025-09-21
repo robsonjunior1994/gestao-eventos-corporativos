@@ -4,6 +4,7 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -104,6 +105,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 txtValorBase.Text = fornecedor.ValorBase.ToString();
 
                 btnCadastrar.Content = "Atualizar";
+                btnCadastrar.Background = new SolidColorBrush(Colors.Aqua);
             }
         }
 
@@ -159,6 +161,9 @@ namespace GestaoEventosCorporativos.Wpf.Views
             txtNomeServico.Clear();
             txtCnpj.Clear();
             txtValorBase.Clear();
+
+            btnCadastrar.Content = "Cadastrar";
+            btnCadastrar.Background = new SolidColorBrush(Colors.Green);
         }
 
 

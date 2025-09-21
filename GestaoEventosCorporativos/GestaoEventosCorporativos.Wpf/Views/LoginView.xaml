@@ -13,9 +13,9 @@
         
         <Label Content="Senha"/>
         <PasswordBox x:Name="txtPassword" Margin="0,0,0,20" Height="30"/>
-        
-        <Button Content="Entrar" Click="Entrar_Click" Height="35" Margin="0,0,0,10"/>
-        
-        <Button Content="Cadastrar-se" Click="Cadastrar_Click" Height="35"/>
+
+        <Button Content="Entrar" Background="Green" Click="Entrar_Click" Height="35" Margin="0,0,0,10"/>
+
+        <Button Content="Cadastrar-se" Background="Blue" Click="Cadastrar_Click" Height="35"/>
     </StackPanel>
 </UserControl>

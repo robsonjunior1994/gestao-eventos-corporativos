@@ -45,8 +45,8 @@
                     <DataGridTextColumn Header="ID" Binding="{Binding EventoId}" Width="80"/>
                     <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="200"/>
                     <DataGridTextColumn Header="Orçamento Máximo" Binding="{Binding OrcamentoMaximo, StringFormat=C}" Width="150"/>
-                    <DataGridTextColumn Header="Total Fornecedores" Binding="{Binding ValorTotalFornecedores, StringFormat=C}" Width="150"/>
-                    <DataGridTextColumn Header="Saldo Orçamento" Binding="{Binding SaldoOrcamento, StringFormat=C}" Width="150"/>
+                    <DataGridTextColumn Header="Total gasto com fornecedores" Binding="{Binding ValorTotalFornecedores, StringFormat=C}" Width="150"/>
+                    <DataGridTextColumn Header="Saldo restante do orçamento" Binding="{Binding SaldoOrcamento, StringFormat=C}" Width="150"/>
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -61,7 +61,7 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <TextBlock Text="Relatório: Fornecedores Mais Utilizados" 
+            <TextBlock Text="Relatório: Fornecedores mais utilizados nos eventos" 
            FontSize="18" FontWeight="Bold" Margin="0,20,0,10"/>
 
             <DataGrid x:Name="dgRelatorioFornecedores" AutoGenerateColumns="False" 

@@ -31,7 +31,7 @@
                     <TextBlock x:Name="lblLotacao" Margin="0,2,0,0"/>
                 </StackPanel>
 
-                <Button Grid.Column="1" Content="Voltar" Padding="10,4" Click="Voltar_Click"
+                <Button Grid.Column="1" Background="Red" Content="Voltar" Padding="10,4" Click="Voltar_Click"
                         HorizontalAlignment="Right" VerticalAlignment="Top"/>
             </Grid>
         </Border>

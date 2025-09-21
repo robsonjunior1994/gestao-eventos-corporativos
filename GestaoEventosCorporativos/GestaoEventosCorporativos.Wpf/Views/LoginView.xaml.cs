@@ -16,6 +16,9 @@ namespace GestaoEventosCorporativos.Wpf.Views
             _main = main;
             _userService = new UserService();
 
+            txtEmail.Text = "robson@mail.com";
+            txtPassword.Password = "123456789";
+
         }
 
         private void Cadastrar_Click(object sender, RoutedEventArgs e)

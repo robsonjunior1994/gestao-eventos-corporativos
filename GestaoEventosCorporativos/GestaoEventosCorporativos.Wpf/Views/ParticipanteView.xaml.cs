@@ -3,6 +3,7 @@ using GestaoEventosCorporativos.Wpf.DTOs.Request;
 using GestaoEventosCorporativos.Wpf.Services;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -148,7 +149,8 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     }
                 }
 
-                btnCadastrar.Content = "Atualizar"; 
+                btnCadastrar.Content = "Atualizar";
+                btnCadastrar.Background = new SolidColorBrush(Colors.Aqua);
             }
         }
 
@@ -177,6 +179,9 @@ namespace GestaoEventosCorporativos.Wpf.Views
             txtCpf.Clear();
             txtTelefone.Clear();
             cmbTipo.SelectedIndex = -1;
+
+            btnCadastrar.Content = "Cadastrar";
+            btnCadastrar.Background = new SolidColorBrush(Colors.Green);
         }
 
 

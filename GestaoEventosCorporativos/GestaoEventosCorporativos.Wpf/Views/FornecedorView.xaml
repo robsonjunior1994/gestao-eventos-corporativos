@@ -20,7 +20,7 @@
             <TextBlock Text="Gerenciar Fornecedores" 
                        FontSize="22" FontWeight="Bold"
                        VerticalAlignment="Center" DockPanel.Dock="Left"/>
-            <Button Content="Voltar" Width="100" Height="30"
+            <Button Content="Voltar" Background="Red" Width="100" Height="30"
                     DockPanel.Dock="Right"
                     HorizontalAlignment="Right"
                     Click="Voltar_Click"/>
@@ -41,7 +41,7 @@
             <Label Content="Valor Base"/>
             <TextBox x:Name="txtValorBase" Height="30" Margin="0,0,0,10"/>
 
-            <Button x:Name="btnCadastrar" Content="Cadastrar/Atualizar" Height="35" Click="Cadastrar_Click"/>
+            <Button x:Name="btnCadastrar" Background="Green" Content="Cadastrar" Height="35" Click="Cadastrar_Click"/>
         </StackPanel>
 
         <!-- Lista de fornecedores -->

@@ -6,6 +6,7 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -201,6 +202,10 @@ namespace GestaoEventosCorporativos.Wpf.Views
                         txtLotacaoMaxima.Text = evento.LotacaoMaxima.ToString();
                         txtOrcamentoMaximo.Text = evento.OrcamentoMaximo.ToString();
 
+                        btnSalvar.Content = "Atualizar Evento";
+                        btnSalvar.Background = new SolidColorBrush(Colors.Aqua);
+
+
                         var tipoSelecionado = tiposResult.Data.Items
                             .FirstOrDefault(t => t.Descricao == evento.TipoEventoDescricao);
 
@@ -229,6 +234,9 @@ namespace GestaoEventosCorporativos.Wpf.Views
             txtLotacaoMaxima.Clear();
             txtOrcamentoMaximo.Clear();
             cmbTipoEvento.SelectedIndex = -1;
+
+            btnSalvar.Content = "Cadastrar";
+            btnSalvar.Background = new SolidColorBrush(Colors.Green);
         }
         private void AdicionarParticipantes_Click(object sender, RoutedEventArgs e)
         {
