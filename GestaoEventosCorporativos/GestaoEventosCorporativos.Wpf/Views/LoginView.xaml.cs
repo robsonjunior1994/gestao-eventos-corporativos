@@ -16,10 +16,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
             _main = main;
             _userService = new UserService();
 
-
-            //EXCLUIR DEPOIS
-            //txtEmail.Text = "robson1@example.com";
-            //txtPassword.Password = "123456789";
         }
 
         private void Cadastrar_Click(object sender, RoutedEventArgs e)
@@ -39,7 +35,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
             if (result != null && result.IsSuccess && result.Data != null)
             {
-                AppSession.Token = result.Data.Token; // 🔑 guarda o token
+                AppSession.Token = result.Data.Token;
                 _main.Navigate(new HomeView(_main));
             }
 

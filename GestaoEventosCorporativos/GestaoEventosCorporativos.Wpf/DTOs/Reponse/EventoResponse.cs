@@ -17,7 +17,6 @@
         public List<string> Participantes { get; set; }
         public List<string> Fornecedores { get; set; }
 
-        // Helpers para exibição
         public string ParticipantesResumo => Participantes != null && Participantes.Any()
             ? string.Join(", ", Participantes)
             : "Nenhum";

@@ -43,7 +43,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
             if (_fornecedorEmEdicaoId == null)
             {
-                // 🔹 Cadastro
                 var result = await _fornecedorService.CadastrarFornecedorAsync(request);
 
                 if (result != null && result.IsSuccess)
@@ -57,7 +56,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
             else
             {
-                // 🔹 Atualização
                 var result = await _fornecedorService.EditarFornecedorAsync(_fornecedorEmEdicaoId.Value, request);
 
                 if (result != null && result.IsSuccess)
@@ -70,10 +68,9 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 }
 
                 _fornecedorEmEdicaoId = null;
-                btnCadastrar.Content = "Cadastrar"; // volta texto original
+                btnCadastrar.Content = "Cadastrar"; 
             }
 
-            // 🔹 Recarrega lista e limpa form
             await CarregarLista(_paginaAtual, _pageSize);
             LimparFormulario();
         }
@@ -106,7 +103,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 txtCnpj.Text = fornecedor.Cnpj;
                 txtValorBase.Text = fornecedor.ValorBase.ToString();
 
-                btnCadastrar.Content = "Atualizar"; // muda o texto do botão
+                btnCadastrar.Content = "Atualizar";
             }
         }
 
@@ -124,7 +121,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     if (result != null && result.IsSuccess)
                     {
                         MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarLista(_paginaAtual, _pageSize); // recarrega lista
+                        await CarregarLista(_paginaAtual, _pageSize); 
                     }
                     else
                     {

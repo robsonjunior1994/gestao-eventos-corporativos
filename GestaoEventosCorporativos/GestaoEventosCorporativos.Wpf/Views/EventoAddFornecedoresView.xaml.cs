@@ -92,7 +92,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
                 dgFornecedoresEvento.ItemsSource = lista;
 
-                // Atualiza saldo/orçamento
                 lblOrcamento.Text = $"Orçamento Máximo: {evento.Data.OrcamentoMaximo:C} | Saldo: {evento.Data.SaldoOrcamento:C}";
             }
             else
@@ -116,7 +115,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     if (resp != null && resp.IsSuccess)
                     {
                         MessageBox.Show(resp.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarFornecedoresDoEvento(_evento.Id); // 🔄 Atualiza lista e saldo
+                        await CarregarFornecedoresDoEvento(_evento.Id); 
                     }
                     else
                     {
@@ -159,7 +158,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     {
                         MessageBox.Show(resp.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                        // 🔄 Atualiza lista e saldo/orçamento
                         await CarregarFornecedoresDoEvento(_evento.Id);
                     }
                     else

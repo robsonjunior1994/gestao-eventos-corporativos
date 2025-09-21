@@ -21,13 +21,10 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
         private async void HomeView_Loaded(object sender, RoutedEventArgs e)
         {
-            // Carrega saldo/orçamento
             await CarregarRelatorioSaldo();
 
-            // Carrega tipos de participantes
             await CarregarRelatorioTiposParticipantes();
 
-            // Carrega relatório de fornecedores mais utilizados
             await CarregarRelatorioFornecedores();
 
         }

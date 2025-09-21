@@ -11,7 +11,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
         private readonly TipoEventoService _tipoEventoService;
         private int _paginaAtual = 1;
         private int _totalPaginas = 1;
-        private const int _pageSize = 5; // tamanho da página
+        private const int _pageSize = 5; 
         private readonly MainWindow _main;
         private int? _tipoEventoEmEdicaoId = null;
 
@@ -30,7 +30,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
             if (_tipoEventoEmEdicaoId == null)
             {
-                // 🔹 Cadastro
                 var result = await _tipoEventoService.CadastrarTipoEventoAsync(request);
 
                 if (result != null && result.IsSuccess)
@@ -44,7 +43,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
             else
             {
-                // 🔹 Atualização
                 var result = await _tipoEventoService.EditarTipoEventoAsync(_tipoEventoEmEdicaoId.Value, request);
 
                 if (result != null && result.IsSuccess)
@@ -57,10 +55,9 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 }
 
                 _tipoEventoEmEdicaoId = null;
-                btnCadastrar.Content = "Cadastrar"; // volta texto do botão
+                btnCadastrar.Content = "Cadastrar";
             }
 
-            // 🔹 Recarrega lista e limpa form
             await CarregarLista(_paginaAtual, _pageSize);
             LimparFormulario();
         }
@@ -115,7 +112,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     if (result != null && result.IsSuccess)
                     {
                         MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarLista(_paginaAtual, _pageSize); // recarregar lista
+                        await CarregarLista(_paginaAtual, _pageSize); 
                     }
                     else
                     {
@@ -132,7 +129,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
             {
                 _tipoEventoEmEdicaoId = tipoEvento.Id;
                 txtDescricao.Text = tipoEvento.Descricao;
-                btnCadastrar.Content = "Atualizar"; // muda texto do botão
+                btnCadastrar.Content = "Atualizar"; 
             }
         }
 

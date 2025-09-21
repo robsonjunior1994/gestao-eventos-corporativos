@@ -20,14 +20,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Repositórios
 builder.Services.AddScoped<IEventoRepository, EventoRepository>();
 builder.Services.AddScoped<IParticipanteRepository, ParticipanteRepository>();
 builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
 builder.Services.AddScoped<ITipoEventoRepository, TipoEventoRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-// Serviços
 builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<IParticipanteService, ParticipanteService>();
 builder.Services.AddScoped<IFornecedorService, FornecedorService>();
@@ -37,7 +35,6 @@ builder.Services.AddScoped<IEncryptionPasswordService, EncryptionPasswordService
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRelatorioService, RelatorioService>();
 
-// Configuração do JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"]);
 

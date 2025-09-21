@@ -33,10 +33,8 @@ namespace GestaoEventosCorporativos.Wpf.Views
         {
             PreencherCabecalho();
 
-            // 🔹 Carrega os participantes já vinculados
             await CarregarParticipantesDoEvento(_evento.Id);
 
-            // 🔹 Carrega os participantes disponíveis
             await CarregarParticipantesDisponiveis(_paginaAtual, _pageSize);
         }
 
@@ -50,7 +48,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
             lblLotacao.Text = $"Número atual de participantes: {_evento.LotacaoMaxima} | Número atual de participantes: {_evento.Participantes.Count}";
         }
 
-        // 🔹 Participantes já no evento
         private async Task CarregarParticipantesDoEvento(int eventoId)
         {
             var evento = await _eventoService.ObterEventoPorIdAsync(eventoId);
@@ -60,10 +57,10 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
                 foreach (var p in evento.Data.Participantes)
                 {
-                    // Remove ; no final e divide pelo separador ","
+                    
                     var linha = p.Replace(";", "").Trim();
 
-                    // Exemplo: "NOME: Joao pedro, CPF:15139292751"
+                    
                     var partes = linha.Split(',');
 
                     string nome = "";
@@ -90,7 +87,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
                 dgParticipantesEvento.ItemsSource = lista;
 
-                // 🔹 Atualiza o label de lotação toda vez que recarregar a lista
+                
                 lblLotacao.Text =
                     $"Lotação máxima: {evento.Data.LotacaoMaxima} | " +
                     $"Número atual de participantes: {lista.Count}";
@@ -102,7 +99,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
         }
 
-        // 🔹 Participantes disponíveis (paginados)
         private async Task CarregarParticipantesDisponiveis(int pageNumber, int pageSize)
         {
             var result = await _participanteService.ListarParticipantesAsync(pageNumber, pageSize);
@@ -121,7 +117,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
         }
 
-        // 🔹 Adicionar participante ao evento
         private async void Adicionar_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is string cpf && !string.IsNullOrWhiteSpace(cpf))
@@ -138,7 +133,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     {
                         MessageBox.Show(resp.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                        // 🔹 Atualiza as duas listas
+                        
                         await CarregarParticipantesDoEvento(_evento.Id);
                         await CarregarParticipantesDisponiveis(_paginaAtual, _pageSize);
                     }
@@ -151,7 +146,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
         }
 
-        // 🔹 Paginação
         private async void Anterior_Click(object sender, RoutedEventArgs e)
         {
             if (_paginaAtual > 1)
@@ -164,7 +158,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 await CarregarParticipantesDisponiveis(_paginaAtual + 1, _pageSize);
         }
 
-        // 🔹 Voltar para a tela de eventos
         private void Voltar_Click(object sender, RoutedEventArgs e)
         {
             _main.Navigate(new EventoView(_main));
@@ -186,7 +179,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     {
                         MessageBox.Show(resp.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                        // Atualiza as listas
                         await CarregarParticipantesDoEvento(_evento.Id);
                         await CarregarParticipantesDisponiveis(_paginaAtual, _pageSize);
                     }

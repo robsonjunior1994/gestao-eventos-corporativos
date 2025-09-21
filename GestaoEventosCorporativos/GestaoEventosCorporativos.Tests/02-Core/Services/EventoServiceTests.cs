@@ -521,7 +521,6 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
                 "Centro", "Rua X", "", 1, 1000m, 1)
             { Id = 1 };
 
-            // já tem 1 participante (lotação = 1)
             evento.Participantes.Add(new ParticipanteEvento { EventoId = 1, ParticipanteId = 99, Evento = evento });
 
             var participante = new Participante { Id = 7, NomeCompleto = "Ana", CPF = "12345678901" };
@@ -543,13 +542,11 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         public async Task AddParticipanteByCpfAsync_DeveFalhar_QuandoExisteConflitoDeDatasComOutroEventoDoParticipante()
         {
             // Arrange
-            // evento alvo: 10-11 jan 2025
             var alvo = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 100, 1000m, 1)
             { Id = 1 };
 
-            // evento já inscrito: 11 jan 2025 (sobrepõe porque DataInicio < DataFim && DataFim > DataInicio)
             var outro = new Evento("Meetup",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 10, 23, 59, 59),
                 "Auditório", "Rua Y", "", 50, 500m, 1)
@@ -593,7 +590,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
                 Id = 7,
                 NomeCompleto = "Ana",
                 CPF = "12345678901",
-                Eventos = new List<ParticipanteEvento>() // sem conflitos
+                Eventos = new List<ParticipanteEvento>() 
             };
 
             _eventoRepoMock.Setup(r => r.GetByIdWithAggregatesAsync(1)).ReturnsAsync(alvo);
@@ -731,7 +728,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             var evento = new Evento("DevConf",
                 new DateTime(2025, 1, 10), new DateTime(2025, 1, 11),
                 "Centro", "Rua X", "", 100, 300m, 1)
-            { Id = 1 }; // orçamento baixo
+            { Id = 1 }; 
 
             var fornecedor = new Fornecedor { Id = 10, CNPJ = "11111111000191", NomeServico = "Som & Luz", ValorBase = 500m };
 
@@ -1046,7 +1043,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
             // Assert
             Assert.True(result.IsSuccess);
             Assert.True(result.Data);
-            Assert.Empty(evento.Fornecedores); // foi removido
+            Assert.Empty(evento.Fornecedores);
             _eventoRepoMock.Verify(r => r.UpdateAsync(evento), Times.Once);
         }
         [Fact]

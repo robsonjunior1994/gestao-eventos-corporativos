@@ -55,7 +55,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
                 if (_participanteEmEdicaoId == null)
                 {
-                    // 🔹 Cadastro
+
                     var result = await _participanteService.CadastrarParticipanteAsync(request);
 
                     if (result != null && result.IsSuccess)
@@ -71,7 +71,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 }
                 else
                 {
-                    // 🔹 Atualização
                     var result = await _participanteService.EditarParticipanteAsync(_participanteEmEdicaoId.Value, request);
 
                     if (result != null && result.IsSuccess)
@@ -86,10 +85,9 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     }
 
                     _participanteEmEdicaoId = null;
-                    btnCadastrar.Content = "Cadastrar"; // volta texto original
+                    btnCadastrar.Content = "Cadastrar"; 
                 }
 
-                // 🔹 Sempre recarrega lista e limpa form
                 await CarregarLista(_paginaAtual, _pageSize);
                 LimparFormulario();
             }
@@ -113,7 +111,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     if (result != null && result.IsSuccess)
                     {
                         MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarLista(_paginaAtual, _pageSize); // recarrega a lista
+                        await CarregarLista(_paginaAtual, _pageSize);
                     }
                     else
                     {
@@ -133,7 +131,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 txtCpf.Text = participante.Cpf;
                 txtTelefone.Text = participante.Telefone;
 
-                // 🔹 Converte string Tipo -> int
                 int tipo = participante.Tipo switch
                 {
                     "VIP" => 0,
@@ -142,7 +139,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     _ => 0
                 };
 
-                // Seleciona tipo no ComboBox
                 foreach (ComboBoxItem item in cmbTipo.Items)
                 {
                     if (item.Tag != null && int.TryParse(item.Tag.ToString(), out int itemTipo) && itemTipo == tipo)
@@ -152,7 +148,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     }
                 }
 
-                btnCadastrar.Content = "Atualizar"; // muda texto do botão
+                btnCadastrar.Content = "Atualizar"; 
             }
         }
 

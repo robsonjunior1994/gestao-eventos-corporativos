@@ -37,7 +37,6 @@ namespace GestaoEventosCorporativos.Wpf.Services
                 if (result == null || result.Cep == null)
                     return null;
 
-                // Concatena em uma string formatada
                 return $"{result.Logradouro}, {result.Bairro}, {result.Localidade} - {result.Uf}, {result.Cep}";
             }
             catch

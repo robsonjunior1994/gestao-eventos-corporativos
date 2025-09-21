@@ -20,7 +20,6 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Aplica todas as configurações que estão na pasta Configurations para evitar o acúmulo de código aqui
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
             base.OnModelCreating(modelBuilder);

@@ -10,7 +10,7 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Configurations
         {
             builder.ToTable("ParticipantesEventos");
 
-            builder.HasKey(pe => new { pe.ParticipanteId, pe.EventoId }); // chave composta
+            builder.HasKey(pe => new { pe.ParticipanteId, pe.EventoId }); 
 
             builder.Property(pe => pe.DataInscricao)
                 .HasDefaultValueSql("GETDATE()");

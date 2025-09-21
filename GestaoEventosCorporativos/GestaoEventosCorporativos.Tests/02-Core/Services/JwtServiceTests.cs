@@ -14,7 +14,7 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         {
             var inMemorySettings = new Dictionary<string, string>
             {
-                {"Jwt:Secret", "supersecretkeyforsigningjwttokens12345"}, // precisa ter tamanho suficiente
+                {"Jwt:Secret", "supersecretkeyforsigningjwttokens12345"}, 
                 {"Jwt:Issuer", "test-issuer"},
                 {"Jwt:Audience", "test-audience"},
                 {"Jwt:ExpiresInHours", "1"}
@@ -33,10 +33,10 @@ namespace GestaoEventosCorporativos.Tests._02_Core.Services
         [Fact]
         public void GenerateToken_DeveRetornarErro_QuandoExcecaoLancada()
         {
-            // Arrange: configuração inválida (chave secreta vazia causa erro)
+            // Arrange
             var inMemorySettings = new Dictionary<string, string>
             {
-                {"Jwt:Secret", ""}, // inválido
+                {"Jwt:Secret", ""}, 
                 {"Jwt:Issuer", "test_issuer"},
                 {"Jwt:Audience", "test_audience"},
                 {"Jwt:ExpiresInHours", "1"}

@@ -10,7 +10,7 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Configurations
         {
             builder.ToTable("EventosFornecedores");
 
-            builder.HasKey(ef => new { ef.EventoId, ef.FornecedorId }); // chave composta
+            builder.HasKey(ef => new { ef.EventoId, ef.FornecedorId }); 
 
             builder.Property(ef => ef.ValorContratado)
                 .HasColumnType("decimal(18,2)")

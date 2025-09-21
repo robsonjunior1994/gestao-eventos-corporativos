@@ -93,12 +93,10 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
             if (_eventoEmEdicaoId.HasValue)
             {
-                // Edição
                 result = await _eventoService.AtualizarEventoAsync(_eventoEmEdicaoId.Value, request);
             }
             else
             {
-                // Cadastro novo
                 result = await _eventoService.CadastrarEventoAsync(request);
             }
 
@@ -168,7 +166,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     {
                         MessageBox.Show("Evento excluído com sucesso!", "Sucesso",
                                         MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarEventos(); // recarrega lista
+                        await CarregarEventos(); 
                     }
                     else
                     {
@@ -189,13 +187,11 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 {
                     var evento = eventoResult.Data;
 
-                    // Carregar os tipos de evento novamente
                     var tiposResult = await _tipoEventoService.ListarTipoEventosAsync(1, 50);
                     if (tiposResult != null && tiposResult.IsSuccess)
                     {
                         cmbTipoEvento.ItemsSource = tiposResult.Data.Items;
 
-                        // Preencher campos com os dados do evento
                         txtNome.Text = evento.Nome;
                         dpDataInicio.SelectedDate = evento.DataInicio;
                         dpDataFim.SelectedDate = evento.DataFim;
@@ -205,14 +201,12 @@ namespace GestaoEventosCorporativos.Wpf.Views
                         txtLotacaoMaxima.Text = evento.LotacaoMaxima.ToString();
                         txtOrcamentoMaximo.Text = evento.OrcamentoMaximo.ToString();
 
-                        // Selecionar no combo pelo nome (já que não temos Id)
                         var tipoSelecionado = tiposResult.Data.Items
                             .FirstOrDefault(t => t.Descricao == evento.TipoEventoDescricao);
 
                         if (tipoSelecionado != null)
                             cmbTipoEvento.SelectedValue = tipoSelecionado.Id;
 
-                        // Guardar o Id do evento sendo editado
                         _eventoEmEdicaoId = evento.Id;
                     }
                 }

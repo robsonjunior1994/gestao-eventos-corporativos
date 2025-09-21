@@ -33,7 +33,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
                 if (result != null && result.IsSuccess)
                 {
-                    // ✅ Sucesso
+                    
                     MessageBox.Show(
                         $"{result.Message}\n\nUsuário: {result.Data.Name}\nEmail: {result.Data.Email}",
                         "Sucesso",
@@ -48,7 +48,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
                     if (result?.Errors != null)
                     {
-                        // Converte erros para JSON indentado
+                        
                         string jsonErrors = JsonSerializer.Serialize(
                             result.Errors,
                             new JsonSerializerOptions { WriteIndented = true });

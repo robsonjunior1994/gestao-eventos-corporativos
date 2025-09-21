@@ -27,22 +27,18 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
         {
             try
             {
-                // Regra de negócio 1: Data início < fim (ignorar horas)
                 if (evento.DataInicio.Date >= evento.DataFim.Date)
                     return Result<Evento>.Failure(
                         "A data de início deve ser anterior à data de fim.",
                         ErrorCode.VALIDATION_ERROR
                     );
 
-                // Regra de negócio 2: Lotação > 0
                 if (evento.LotacaoMaxima < EventoRegras.LOTACAO_MINIMA)
                     return Result<Evento>.Failure("A lotação máxima deve ser maior que zero.", ErrorCode.VALIDATION_ERROR);
 
-                // Regra de negócio 3: Orçamento > 0
                 if (evento.OrcamentoMaximo < EventoRegras.ORCAMENTO_MINIMO)
                     return Result<Evento>.Failure("O orçamento deve ser maior que zero.", ErrorCode.VALIDATION_ERROR);
 
-                // Regra de negócio 4: TipoEvento precisa existir
                 var tipoEvento = await _tipoEventoRepository.GetByIdAsync(evento.TipoEventoId);
                 if (tipoEvento == null)
                     return Result<Evento>.Failure("O tipo de evento informado não existe.", ErrorCode.NOT_FOUND);
@@ -53,7 +49,6 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             }
             catch (Exception)
             {
-                // logar erro aqui (ex: Serilog, Console, etc.)
                 return Result<Evento>.Failure("Ocorreu um erro ao criar o evento.", ErrorCode.DATABASE_ERROR);
             }
         }
@@ -74,7 +69,6 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             }
             catch (Exception)
             {
-                // logar erro aqui (Serilog, Console, etc.) se der tempo.
                 return Result<bool>.Failure("Ocorreu um erro ao excluir o evento.", ErrorCode.DATABASE_ERROR);
             }
         }
@@ -114,7 +108,7 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             }
             catch (Exception)
             {
-                // logar erro aqui (ex: Serilog, Console, etc.)
+                
                 return Result<Evento>.Failure("Ocorreu um erro ao buscar o evento.", ErrorCode.DATABASE_ERROR);
             }
         }
@@ -123,19 +117,19 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
         {
             try
             {
-                // Regra de negócio 1: Data início < fim
+                
                 if (evento.DataInicio >= evento.DataFim)
                     return Result<Evento>.Failure("A data de início deve ser anterior à data de fim.", ErrorCode.VALIDATION_ERROR);
 
-                // Regra de negócio 2: Lotação > 0
+                
                 if (evento.LotacaoMaxima < EventoRegras.LOTACAO_MINIMA)
                     return Result<Evento>.Failure("A lotação máxima deve ser maior que zero.", ErrorCode.VALIDATION_ERROR);
 
-                // Regra de negócio 3: Orçamento > 0
+                
                 if (evento.OrcamentoMaximo < EventoRegras.ORCAMENTO_MINIMO)
                     return Result<Evento>.Failure("O orçamento deve ser maior que zero.", ErrorCode.VALIDATION_ERROR);
 
-                // Regra de negócio 4: TipoEvento precisa existir, não estava especificado mas faz sentido então criei
+                
                 var tipoEvento = await _tipoEventoRepository.GetByIdAsync(evento.TipoEventoId);
                 if (tipoEvento == null)
                     return Result<Evento>.Failure("O tipo de evento informado não existe.", ErrorCode.NOT_FOUND);
@@ -145,7 +139,7 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
             }
             catch (Exception)
             {
-                // logar erro aqui (ex: Serilog, Console, etc.) se der tempo.
+                
                 return Result<Evento>.Failure("Ocorreu um erro ao atualizar o evento.", ErrorCode.DATABASE_ERROR);
             }
         }

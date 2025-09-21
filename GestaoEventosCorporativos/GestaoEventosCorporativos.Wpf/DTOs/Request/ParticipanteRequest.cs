@@ -5,6 +5,6 @@
         public string NomeCompleto { get; set; }
         public string Cpf { get; set; }
         public string Telefone { get; set; }
-        public int Tipo { get; set; } // 0 = VIP, 1 = Normal, etc.
+        public int Tipo { get; set; } 
     }
 }
