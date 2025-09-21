@@ -6,7 +6,8 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.DTOs.Requests
     {
 
         [Required(ErrorMessage = "O CPF é obrigatório.")]
-        [RegularExpression(@"^\d{11}$", ErrorMessage = "O CPF deve conter 11 dígitos numéricos.")]
+        [MinLength(11, ErrorMessage = "O CPF deve conter 11 dígitos numéricos.")]
+        [MaxLength(11, ErrorMessage = "O CPF deve conter 11 dígitos numéricos.")]
         public string CPF { get; set; }
     }
 }

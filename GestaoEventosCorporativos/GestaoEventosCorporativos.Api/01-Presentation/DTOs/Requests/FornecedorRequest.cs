@@ -7,7 +7,9 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.DTOs.Requests
         [Required, StringLength(150)]
         public string NomeServico { get; set; } = string.Empty;
 
-        [Required, StringLength(18)] 
+        [Required]
+        [MinLength(14, ErrorMessage = "O CNPJ deve conter 14 dígitos numéricos.")]
+        [MaxLength(14, ErrorMessage = "O CNPJ deve conter 14 dígitos numéricos.")]
         public string CNPJ { get; set; } = string.Empty;
 
         [Range(0.01, double.MaxValue, ErrorMessage = "O valor base deve ser maior que zero.")]
