@@ -20,7 +20,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             _fornecedorService = fornecedorService;
         }
 
-        // GET: api/fornecedores?pageNumber=1&pageSize=10
+        
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
@@ -57,7 +57,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
         }
 
 
-        // GET: api/fornecedores/5
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -85,7 +85,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return Ok(response);
         }
 
-        // POST: api/fornecedores
+        
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] FornecedorRequest request)
         {
@@ -128,7 +128,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return StatusCode(StatusCodes.Status201Created, response);
         }
 
-        // PUT: api/fornecedores/5
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] FornecedorRequest request)
         {
@@ -172,7 +172,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return Ok(response);
         }
 
-        // DELETE: api/fornecedores/5
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

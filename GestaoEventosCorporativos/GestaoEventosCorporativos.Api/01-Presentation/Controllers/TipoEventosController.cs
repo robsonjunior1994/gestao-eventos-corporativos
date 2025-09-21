@@ -20,7 +20,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             _tipoEventoService = tipoEventoService;
         }
 
-        // GET: api/tipoeventos?pageNumber=1&pageSize=10
+        
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {

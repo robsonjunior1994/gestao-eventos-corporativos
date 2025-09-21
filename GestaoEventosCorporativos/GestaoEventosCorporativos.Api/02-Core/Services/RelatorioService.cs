@@ -56,7 +56,7 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
         }
 
         public async Task<Result<IEnumerable<FornecedorUtilizacaoResponse>>> GetFornecedoresMaisUtilizadosAsync(
-            int pageNumber = 1, int pageSize = 1000) // default grande p/ buscar tudo
+            int pageNumber = 1, int pageSize = 1000) 
         {
             try
             {

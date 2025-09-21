@@ -21,7 +21,7 @@ namespace GestaoEventosCorporativos.Api._03_Infrastructure.Repositories
             int totalCount = await query.CountAsync();
 
             var participantes = await query
-                .OrderBy(p => p.NomeCompleto) // ordena por nome
+                .OrderBy(p => p.NomeCompleto) 
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

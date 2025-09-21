@@ -21,7 +21,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             _eventoService = eventoService;
         }
 
-        // GET: api/eventos?pageNumber=1&pageSize=10
+        
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
@@ -77,7 +77,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
         }
 
 
-        // GET: api/eventos/5
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -124,7 +124,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return Ok(response);
         }
 
-        // POST: api/eventos
+        
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] EventoRequest request)
         {
@@ -180,7 +180,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return StatusCode(StatusCodes.Status201Created, response);
         }
 
-        // PUT: api/eventos/5
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] EventoRequest request)
         {
@@ -238,7 +238,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return Ok(response);
         }
 
-        // DELETE: api/eventos/5
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

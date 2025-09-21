@@ -63,7 +63,7 @@ namespace GestaoEventosCorporativos.Api._01_Presentation.Controllers
             return StatusCode(StatusCodes.Status201Created, response);
         }
 
-        // GET: api/participantes?pageNumber=1&pageSize=10
+        
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
