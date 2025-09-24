@@ -1,5 +1,96 @@
 Vídeo de apresentação — 🎥 [LINK](https://youtu.be/u8gembunzCA)
 
+# 🤔 Como rodar o projeto
+
+<details>
+  <summary> Detalhes </summary>
+
+  ## 🛠️ Pré-requisitos
+
+Certifique-se de ter instalado:
+
+1. Carga de trabalho **ASP.NET e desenvolvimento Web** (Visual Studio Installer)  
+2. Carga de trabalho **Desenvolvimento para desktop com .NET** (Visual Studio Installer)
+<details>
+  
+  <img width="2139" height="686" alt="image" src="https://github.com/user-attachments/assets/92af44e3-2b70-404d-9c15-ada654db1492" />
+
+</details>
+
+3. **SDK .NET 8**  
+4. **Docker Desktop**  
+
+
+
+## 🗄️ Configuração do Banco de Dados (SQL Server via Docker)
+
+<details>
+<summary><strong>Passo a passo</strong></summary>
+
+**1. Baixar a imagem do SQL Server:**
+
+   _docker pull mcr.microsoft.com/mssql/server:2022-latest_
+
+
+**2. Rodar o container:**
+
+   _docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Root@12345" -p 1433:1433 --name sqlserver2022 -d mcr.microsoft.com/mssql/server:2022-latest_
+
+
+**3. Acessar o container (se necessário):**
+
+   _docker exec -it sqlserver2022 /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Root@12345_
+
+
+### 📦 Executando Migrações Iniciais
+
+**Navegue até a pasta da API (ajuste o caminho se necessário):**
+
+...
+
+> ⚠️ Instale a ferramenta se necessário:
+
+_dotnet tool install --global dotnet-ef_
+
+**Crie a primeira migração:**
+
+_dotnet ef migrations add InicialMigration --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api --output-dir ../GestaoEventosCorporativos.Api/03-Infrastructure/Migrations_
+
+**Aplicar migrations:**
+
+_dotnet ef database update --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api_
+
+
+</details>
+
+
+
+## ▶️ Rodando a Aplicação (API + WPF via Visual Studio)
+
+<details>
+<summary><strong>Passo a passo</strong></summary>
+  
+Após configurar o banco e aplicar as migrações iniciais, você pode rodar a aplicação completa (API + WPF) direto no Visual Studio:
+
+1. Abra a **Solution** no Visual Studio.
+2. Clique com o botão direito na **Solution (`GestaoEventosCorporativos.sln`)** → vá em **Propriedades**.
+3. No menu lateral, selecione **Startup Project**.
+4. Marque a opção **Multiple startup projects**.
+5. Configure:
+
+   * **GestaoEventosCorporativos.Api** → **Start**
+   * **GestaoEventosCorporativos.Wpf** → **Start**
+6. Salve as configurações.
+7. Pressione **F5** ou clique em **Start** para rodar.
+
+🔹 Assim, o Visual Studio vai iniciar **simultaneamente a API (Web API)** e o **cliente desktop WPF**, permitindo testar toda a solução integrada.
+
+Obs.: [LINK](https://web.postman.co/workspace/My-Workspace~c2368300-0f6e-4a80-8979-850b7b16f939/collection/7362818-090dde86-d7b4-4fd6-8751-7b6ba12e4182?action=share&source=copy-link&creator=7362818) para testar a API via POSTMAN
+
+</details>
+  
+</details>
+
 # Gestão de Eventos Corporativos
 
 Este projeto faz parte de um **desafio técnico** proposto por uma empresa.  
@@ -188,91 +279,6 @@ Quando quero consultar um evento completo, por exemplo, consigo carregar **parti
 </details>
 
 ---
-
-## 🤔 Como rodar o projeto
-
-<details>
-  <summary> Detalhes </summary>
-
-  ## 🛠️ Pré-requisitos
-
-Certifique-se de ter instalado:
-
-1. Carga de trabalho **ASP.NET e desenvolvimento Web** (Visual Studio Installer)  
-2. Carga de trabalho **Desenvolvimento para desktop com .NET** (Visual Studio Installer)    
-3. **SDK .NET 8**  
-4. **Docker Desktop**  
-
-
-
-## 🗄️ Configuração do Banco de Dados (SQL Server via Docker)
-
-<details>
-<summary><strong>Passo a passo</strong></summary>
-
-**1. Baixar a imagem do SQL Server:**
-
-   _docker pull mcr.microsoft.com/mssql/server:2022-latest_
-
-
-**2. Rodar o container:**
-
-   _docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Root@12345" -p 1433:1433 --name sqlserver2022 -d mcr.microsoft.com/mssql/server:2022-latest_
-
-
-**3. Acessar o container (se necessário):**
-
-   _docker exec -it sqlserver2022 /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Root@12345_
-
-
-### 📦 Executando Migrações Iniciais
-
-**Navegue até a pasta da API (ajuste o caminho se necessário):**
-
-...
-
-> ⚠️ Instale a ferramenta se necessário:
-
-_dotnet tool install --global dotnet-ef_
-
-**Crie a primeira migração:**
-
-_dotnet ef migrations add InicialMigration --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api --output-dir ../GestaoEventosCorporativos.Api/03-Infrastructure/Migrations_
-
-**Aplicar migrations:**
-
-_dotnet ef database update --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api_
-
-
-</details>
-
-
-
-## ▶️ Rodando a Aplicação (API + WPF via Visual Studio)
-
-<details>
-<summary><strong>Passo a passo</strong></summary>
-  
-Após configurar o banco e aplicar as migrações iniciais, você pode rodar a aplicação completa (API + WPF) direto no Visual Studio:
-
-1. Abra a **Solution** no Visual Studio.
-2. Clique com o botão direito na **Solution (`GestaoEventosCorporativos.sln`)** → vá em **Propriedades**.
-3. No menu lateral, selecione **Startup Project**.
-4. Marque a opção **Multiple startup projects**.
-5. Configure:
-
-   * **GestaoEventosCorporativos.Api** → **Start**
-   * **GestaoEventosCorporativos.Wpf** → **Start**
-6. Salve as configurações.
-7. Pressione **F5** ou clique em **Start** para rodar.
-
-🔹 Assim, o Visual Studio vai iniciar **simultaneamente a API (Web API)** e o **cliente desktop WPF**, permitindo testar toda a solução integrada.
-
-Obs.: [LINK](https://web.postman.co/workspace/My-Workspace~c2368300-0f6e-4a80-8979-850b7b16f939/collection/7362818-090dde86-d7b4-4fd6-8751-7b6ba12e4182?action=share&source=copy-link&creator=7362818) para testar a API via POSTMAN
-
-</details>
-  
-</details>
 
 ## 📌 Estrutura do Projeto
 
