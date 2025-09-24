@@ -29,37 +29,36 @@ Certifique-se de ter instalado:
 
 **1. Baixar a imagem do SQL Server:**
 
-   _docker pull mcr.microsoft.com/mssql/server:2022-latest_
+   docker pull mcr.microsoft.com/mssql/server:2022-latest
 
 
 **2. Rodar o container:**
-
-   _docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Root@12345" -p 1433:1433 --name sqlserver2022 -d mcr.microsoft.com/mssql/server:2022-latest_
-
-
-**3. Acessar o container (se necessário):**
-
-   _docker exec -it sqlserver2022 /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Root@12345_
+```bash
+   docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Root@12345" -p 1433:1433 --name sqlserver2022 -d mcr.microsoft.com/mssql/server:2022-latest
+```
 
 
 ### 📦 Executando Migrações Iniciais
 
-**Navegue até a pasta da API (ajuste o caminho se necessário):**
-
-...
+**1 - Navegue até a pasta da API:**
 
 > ⚠️ Instale a ferramenta se necessário:
+```bash
+dotnet tool install --global dotnet-ef
+```
 
-_dotnet tool install --global dotnet-ef_
+**Obs.: Já vou deixar as migrations no projeto se quiser testar use o próximo passo 2, caso não queira testar siga para o passo 3
+**** 2 - Crie a primeira migração (SE QUISER TESTAR) :**
 
-**Crie a primeira migração:**
+```bash
+dotnet ef migrations add InicialMigration --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api --output-dir ../GestaoEventosCorporativos.Api/03-Infrastructure/Migrations
+```
 
-_dotnet ef migrations add InicialMigration --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api --output-dir ../GestaoEventosCorporativos.Api/03-Infrastructure/Migrations_
+**3 - Aplicar migrations:**
 
-**Aplicar migrations:**
-
-_dotnet ef database update --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api_
-
+```bash
+dotnet ef database update --project ../GestaoEventosCorporativos.Api --startup-project ../GestaoEventosCorporativos.Api
+```
 
 </details>
 
@@ -88,6 +87,9 @@ Após configurar o banco e aplicar as migrações iniciais, você pode rodar a a
 Obs.: [LINK](https://web.postman.co/workspace/My-Workspace~c2368300-0f6e-4a80-8979-850b7b16f939/collection/7362818-090dde86-d7b4-4fd6-8751-7b6ba12e4182?action=share&source=copy-link&creator=7362818) para testar a API via POSTMAN
 
 </details>
+
+
+
   
 </details>
 
@@ -125,7 +127,6 @@ O objetivo é implementar um sistema de **gestão de eventos corporativos** util
 🎤 **Relatório COMPLETO – Gestão de Eventos Corporativos**
 
 <details>
-
 
 Bom, eu vou explicar como organizei esse projeto de Gestão de Eventos Corporativos.
 
