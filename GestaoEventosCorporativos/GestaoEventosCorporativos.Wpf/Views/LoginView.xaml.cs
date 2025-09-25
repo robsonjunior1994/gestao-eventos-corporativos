@@ -16,8 +16,8 @@ namespace GestaoEventosCorporativos.Wpf.Views
             _main = main;
             _userService = new UserService();
 
-            txtEmail.Text = "robson@mail.com";
-            txtPassword.Password = "123456789";
+            //txtEmail.Text = "robson@mail.com";
+            //txtPassword.Password = "123456789";
 
         }
 
