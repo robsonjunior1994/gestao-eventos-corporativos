@@ -1,9 +1,12 @@
 ﻿using GestaoEventosCorporativos.Wpf.DTOs.Reponse;
 using GestaoEventosCorporativos.Wpf.DTOs.Request;
 using GestaoEventosCorporativos.Wpf.Services;
+using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
+
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -42,6 +45,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
             }
         }
 
+
         private async void Cadastrar_Click(object sender, RoutedEventArgs e)
         {
             if (cmbTipo.SelectedItem is ComboBoxItem selectedItem && int.TryParse(selectedItem.Tag.ToString(), out int tipo))
@@ -54,9 +58,17 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     Tipo = tipo
                 };
 
+                var context = new ValidationContext(request);
+                var results = new List<ValidationResult>();
+                if (!Validator.TryValidateObject(request, context, results, true))
+                {
+                    string erros = string.Join("\n", results.Select(r => r.ErrorMessage));
+                    MessageBox.Show(erros, "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 if (_participanteEmEdicaoId == null)
                 {
-
                     var result = await _participanteService.CadastrarParticipanteAsync(request);
 
                     if (result != null && result.IsSuccess)
@@ -86,7 +98,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     }
 
                     _participanteEmEdicaoId = null;
-                    btnCadastrar.Content = "Cadastrar"; 
+                    btnCadastrar.Content = "Cadastrar";
                 }
 
                 await CarregarLista(_paginaAtual, _pageSize);
@@ -153,8 +165,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 btnCadastrar.Background = new SolidColorBrush(Colors.Aqua);
             }
         }
-
-
 
         private async void Anterior_Click(object sender, RoutedEventArgs e)
         {

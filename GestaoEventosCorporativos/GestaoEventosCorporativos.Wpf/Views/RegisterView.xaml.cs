@@ -1,8 +1,10 @@
 ﻿using GestaoEventosCorporativos.Wpf.DTOs.Request;
 using GestaoEventosCorporativos.Wpf.Services;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -27,13 +29,21 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 Password = txtPassword.Password
             };
 
+            var context = new ValidationContext(request);
+            var results = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(request, context, results, true))
+            {
+                string erros = string.Join("\n", results.Select(r => r.ErrorMessage));
+                MessageBox.Show(erros, "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             try
             {
                 var result = await _userService.RegisterUserAsync(request);
 
                 if (result != null && result.IsSuccess)
                 {
-                    
                     MessageBox.Show(
                         $"{result.Message}\n\nUsuário: {result.Data.Name}\nEmail: {result.Data.Email}",
                         "Sucesso",
@@ -48,7 +58,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
                     if (result?.Errors != null)
                     {
-                        
                         string jsonErrors = JsonSerializer.Serialize(
                             result.Errors,
                             new JsonSerializerOptions { WriteIndented = true });
@@ -64,7 +73,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 MessageBox.Show($"Erro inesperado: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private void Voltar_Click(object sender, RoutedEventArgs e)
         {
             _main.Navigate(new LoginView(_main));

@@ -13,8 +13,6 @@
             <Button Content="Gerenciar Eventos" Click="BtnEvento_Click" Height="35" Margin="0,0,0,10"/>
 
             <!-- Relatórios -->
-
-
             <TextBlock Text="Relatório: Agenda de Participante" 
            FontSize="18" FontWeight="Bold" Margin="0,20,0,10"/>
 
@@ -29,8 +27,8 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Evento ID" Binding="{Binding EventoId}" Width="80"/>
                     <DataGridTextColumn Header="Nome Evento" Binding="{Binding NomeEvento}" Width="200"/>
-                    <DataGridTextColumn Header="Início" Binding="{Binding DataInicio, StringFormat=dd/MM/yyyy}" Width="120"/>
-                    <DataGridTextColumn Header="Fim" Binding="{Binding DataFim, StringFormat=dd/MM/yyyy}" Width="120"/>
+                    <DataGridTextColumn Header="Início" Binding="{Binding DataInicio}" Width="120"/>
+                    <DataGridTextColumn Header="Fim" Binding="{Binding DataFim}" Width="120"/>
                     <DataGridTextColumn Header="Local" Binding="{Binding Local}" Width="200"/>
                 </DataGrid.Columns>
             </DataGrid>

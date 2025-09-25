@@ -1,12 +1,11 @@
 ﻿using GestaoEventosCorporativos.Wpf.DTOs.Reponse;
 using GestaoEventosCorporativos.Wpf.DTOs.Request;
 using GestaoEventosCorporativos.Wpf.Services;
-using System;
-using System.DirectoryServices.ActiveDirectory;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -57,23 +56,53 @@ namespace GestaoEventosCorporativos.Wpf.Views
 
         private async void Cadastrar_Click(object sender, RoutedEventArgs e)
         {
-            if (cmbTipoEvento.SelectedValue == null)
+            var dataInicio = dtpDataInicio.Value ?? DateTime.MinValue;
+            var dataFim = dtpDataFim.Value ?? DateTime.MinValue;
+
+            if (dataInicio < DateTime.Now)
             {
-                MessageBox.Show("Selecione um Tipo de Evento.");
+                MessageBox.Show("A data de início deve ser maior ou igual à data atual.",
+                    "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (!DateTime.TryParse(dpDataInicio.Text, out DateTime dataInicio) ||
-                !DateTime.TryParse(dpDataFim.Text, out DateTime dataFim))
+            if (dataFim <= DateTime.Now)
             {
-                MessageBox.Show("Datas inválidas.");
+                MessageBox.Show("A data de fim deve ser maior que a data atual.",
+                    "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (!int.TryParse(txtLotacaoMaxima.Text, out int lotacaoMaxima) ||
-                !decimal.TryParse(txtOrcamentoMaximo.Text, out decimal orcamentoMaximo))
+            if (dataFim <= dataInicio)
             {
-                MessageBox.Show("Lotação ou Orçamento inválidos.");
+                MessageBox.Show("A data de fim deve ser maior que a data de início.",
+                    "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!int.TryParse(txtLotacaoMaxima.Text, out int lotacaoMaxima))
+            {
+                MessageBox.Show("Digite um número válido para Lotação Máxima.",
+                    "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (lotacaoMaxima <= 0 || lotacaoMaxima > 100_000)
+            {
+                MessageBox.Show("A Lotação Máxima deve ser maior que 0 e no máximo 100.000.",
+                    "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!decimal.TryParse(txtOrcamentoMaximo.Text, out decimal orcamentoMaximo))
+            {
+                MessageBox.Show("Digite um valor numérico válido para Orçamento Máximo.",
+                    "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (orcamentoMaximo < 1 || orcamentoMaximo > 1_000_000_000)
+            {
+                MessageBox.Show("O Orçamento Máximo deve ser maior que 0 e no máximo 1 bilhão.",
+                    "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -87,11 +116,23 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 Observacoes = txtObservacoes.Text,
                 LotacaoMaxima = lotacaoMaxima,
                 OrcamentoMaximo = orcamentoMaximo,
-                TipoEventoId = (int)cmbTipoEvento.SelectedValue
+                TipoEventoId = cmbTipoEvento.SelectedValue != null
+                    ? (int)cmbTipoEvento.SelectedValue
+                    : 0
             };
 
-            ApiResponse<EventoResponse> result;
+            var context = new ValidationContext(request, null, null);
+            var results = new List<ValidationResult>();
 
+            if (!Validator.TryValidateObject(request, context, results, true))
+            {
+                string mensagens = string.Join("\n", results.Select(r => r.ErrorMessage));
+                MessageBox.Show(mensagens, "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 🔹 Continua fluxo normal
+            ApiResponse<EventoResponse> result;
             if (_eventoEmEdicaoId.HasValue)
             {
                 result = await _eventoService.AtualizarEventoAsync(_eventoEmEdicaoId.Value, request);
@@ -167,7 +208,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     {
                         MessageBox.Show("Evento excluído com sucesso!", "Sucesso",
                                         MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarEventos(); 
+                        await CarregarEventos();
                     }
                     else
                     {
@@ -194,8 +235,8 @@ namespace GestaoEventosCorporativos.Wpf.Views
                         cmbTipoEvento.ItemsSource = tiposResult.Data.Items;
 
                         txtNome.Text = evento.Nome;
-                        dpDataInicio.SelectedDate = evento.DataInicio;
-                        dpDataFim.SelectedDate = evento.DataFim;
+                        dtpDataInicio.Value = evento.DataInicio;
+                        dtpDataFim.Value = evento.DataFim;
                         txtLocal.Text = evento.Local;
                         txtEndereco.Text = evento.Endereco;
                         txtObservacoes.Text = evento.Observacoes;
@@ -225,8 +266,8 @@ namespace GestaoEventosCorporativos.Wpf.Views
         private void LimparFormulario()
         {
             txtNome.Clear();
-            dpDataInicio.SelectedDate = null;
-            dpDataFim.SelectedDate = null;
+            dtpDataInicio.Value = null;
+            dtpDataFim.Value = null;
             txtLocal.Clear();
             txtCep.Clear();
             txtEndereco.Clear();
@@ -257,5 +298,12 @@ namespace GestaoEventosCorporativos.Wpf.Views
         {
             _main.Navigate(new HomeView(_main));
         }
+
+        private void txtValorBase_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            // Tenta concatenar o valor atual com o novo caractere e ver se é número
+            e.Handled = !decimal.TryParse(((TextBox)sender).Text + e.Text, out _);
+        }
+
     }
 }

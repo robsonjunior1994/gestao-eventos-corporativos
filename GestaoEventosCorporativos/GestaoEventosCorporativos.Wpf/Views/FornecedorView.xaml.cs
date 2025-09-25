@@ -1,10 +1,12 @@
-﻿using GestaoEventosCorporativos.Wpf.DTOs.Request;
+﻿using GestaoEventosCorporativos.Wpf.DTOs.Reponse;
+using GestaoEventosCorporativos.Wpf.DTOs.Request;
 using GestaoEventosCorporativos.Wpf.Services;
-using System.DirectoryServices.ActiveDirectory;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
+
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -31,7 +33,13 @@ namespace GestaoEventosCorporativos.Wpf.Views
         {
             if (!decimal.TryParse(txtValorBase.Text, out decimal valorBase))
             {
-                MessageBox.Show("Valor Base inválido.");
+                MessageBox.Show("Digite um valor numérico válido para o Valor Base.");
+                return;
+            }
+
+            if (valorBase <= 0 || valorBase > 1_000_000_000)
+            {
+                MessageBox.Show("O Valor Base deve ser maior que 0 e no máximo 1 bilhão.");
                 return;
             }
 
@@ -42,38 +50,44 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 ValorBase = valorBase
             };
 
-            if (_fornecedorEmEdicaoId == null)
+            var context = new ValidationContext(request);
+            var results = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(request, context, results, true))
             {
-                var result = await _fornecedorService.CadastrarFornecedorAsync(request);
+                string erros = string.Join("\n", results.Select(r => r.ErrorMessage));
+                MessageBox.Show(erros, "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-                if (result != null && result.IsSuccess)
-                {
-                    MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    MessageBox.Show(result?.Message ?? "Erro ao cadastrar", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+            ApiResponse<FornecedorResponse> result;
+
+            // 🔹 Se está em edição, chama editar
+            if (_fornecedorEmEdicaoId.HasValue)
+            {
+                result = await _fornecedorService.EditarFornecedorAsync(_fornecedorEmEdicaoId.Value, request);
             }
             else
             {
-                var result = await _fornecedorService.EditarFornecedorAsync(_fornecedorEmEdicaoId.Value, request);
-
-                if (result != null && result.IsSuccess)
-                {
-                    MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    MessageBox.Show(result?.Message ?? "Erro ao atualizar", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-
-                _fornecedorEmEdicaoId = null;
-                btnCadastrar.Content = "Cadastrar"; 
+                result = await _fornecedorService.CadastrarFornecedorAsync(request);
             }
 
-            await CarregarLista(_paginaAtual, _pageSize);
-            LimparFormulario();
+            if (result != null && result.IsSuccess)
+            {
+                MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Reseta para modo cadastro normal
+                _fornecedorEmEdicaoId = null;
+                btnCadastrar.Content = "Cadastrar";
+                btnCadastrar.Background = new SolidColorBrush(Colors.Green);
+
+                LimparFormulario();
+                await CarregarLista(_paginaAtual, _pageSize);
+            }
+            else
+            {
+                string errorMessage = $"StatusCode: {result?.StatusCode}\n{result?.Message ?? "Erro ao salvar"}";
+                MessageBox.Show(errorMessage, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private async Task CarregarLista(int pageNumber, int pageSize)
@@ -123,7 +137,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     if (result != null && result.IsSuccess)
                     {
                         MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarLista(_paginaAtual, _pageSize); 
+                        await CarregarLista(_paginaAtual, _pageSize);
                     }
                     else
                     {
@@ -133,7 +147,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
                 }
             }
         }
-
 
         private async void Anterior_Click(object sender, RoutedEventArgs e)
         {
@@ -166,6 +179,10 @@ namespace GestaoEventosCorporativos.Wpf.Views
             btnCadastrar.Background = new SolidColorBrush(Colors.Green);
         }
 
-
+        private void txtValorBase_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            // Tenta concatenar o valor atual com o novo caractere e ver se é número
+            e.Handled = !decimal.TryParse(((TextBox)sender).Text + e.Text, out _);
+        }
     }
 }

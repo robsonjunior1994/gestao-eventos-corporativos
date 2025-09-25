@@ -1,9 +1,11 @@
 ﻿using GestaoEventosCorporativos.Wpf.DTOs.Request;
 using GestaoEventosCorporativos.Wpf.Services;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
+
 
 namespace GestaoEventosCorporativos.Wpf.Views
 {
@@ -12,7 +14,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
         private readonly TipoEventoService _tipoEventoService;
         private int _paginaAtual = 1;
         private int _totalPaginas = 1;
-        private const int _pageSize = 5; 
+        private const int _pageSize = 5;
         private readonly MainWindow _main;
         private int? _tipoEventoEmEdicaoId = null;
 
@@ -28,6 +30,15 @@ namespace GestaoEventosCorporativos.Wpf.Views
         private async void Cadastrar_Click(object sender, RoutedEventArgs e)
         {
             var request = new TipoEventoRequest { Descricao = txtDescricao.Text };
+
+            var context = new ValidationContext(request);
+            var results = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(request, context, results, true))
+            {
+                string erros = string.Join("\n", results.Select(r => r.ErrorMessage));
+                MessageBox.Show(erros, "Validação", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             if (_tipoEventoEmEdicaoId == null)
             {
@@ -62,7 +73,6 @@ namespace GestaoEventosCorporativos.Wpf.Views
             await CarregarLista(_paginaAtual, _pageSize);
             LimparFormulario();
         }
-
 
         private async Task CarregarLista(int pageNumber, int pageSize)
         {
@@ -113,7 +123,7 @@ namespace GestaoEventosCorporativos.Wpf.Views
                     if (result != null && result.IsSuccess)
                     {
                         MessageBox.Show(result.Message, "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await CarregarLista(_paginaAtual, _pageSize); 
+                        await CarregarLista(_paginaAtual, _pageSize);
                     }
                     else
                     {
