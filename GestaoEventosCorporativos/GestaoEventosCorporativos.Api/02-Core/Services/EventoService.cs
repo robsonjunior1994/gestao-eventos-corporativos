@@ -27,7 +27,7 @@ namespace GestaoEventosCorporativos.Api._02_Core.Services
         {
             try
             {
-                if (evento.DataInicio.Date >= evento.DataFim.Date)
+                if (evento.DataInicio >= evento.DataFim)
                     return Result<Evento>.Failure(
                         "A data de início deve ser anterior à data de fim.",
                         ErrorCode.VALIDATION_ERROR
